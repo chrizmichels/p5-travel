@@ -9,8 +9,8 @@ let projectData = {};
 
 //Setup Client Side Logging
 const log = ulog("app.js");
-// log.level = log.DEBUG;
-log.level = log.NONE;
+log.level = log.DEBUG;
+// log.level = log.NONE;
 
 /* Function called by event listener */
 const getStarted = async event => {

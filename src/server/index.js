@@ -8,8 +8,8 @@ const getLogger = require("webpack-log");
 const logger = getLogger({ name: "wbpck-yoda", timestamp: true });
 
 //Switch Log Level
-logger.level = "silent";
-// logger.level = "debug";
+// logger.level = "silent";
+logger.level = "debug";
 
 /* 
 Aylien Setup Start
