@@ -52,6 +52,11 @@ const getLocationCoordinates = async event => {
 
     const data = await postData("/getLocation", projectData);
 
+    log.debug(
+      "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
+      data
+    );
+
     const forecast = await postData("/getForecast", data);
 
     log.debug(

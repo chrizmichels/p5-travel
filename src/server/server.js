@@ -5,6 +5,7 @@ const cors = require("cors");
 const asyncHandler = require("express-async-handler");
 const Geonames = require("geonames.js");
 const Logic = require("./logic.js");
+const fetch = require("node-fetch");
 
 //Setup Logging
 const getLogger = require("webpack-log");
@@ -83,7 +84,7 @@ app.get("/", function(req, res) {
   res.sendFile(`${distPath}/index.html`);
 });
 
-let port = 8081;
+let port = 8085;
 // let port = 3030;
 
 // designates what port the app will listen to for incoming requests
@@ -135,13 +136,10 @@ app.post("/getForecast", async (req, res) => {
       "getForecast Endpoint -> Server side POST - fetch url: ",
       drkSkyURL
     );
-    const result = await fetch(url);
-    logger.debug(
-      "getForecast Endpoint -> Server side POST - fetch RESULT: ",
-      result
-    );
 
-    res.json({ result });
+    fetch(drkSkyURL)
+      .then(res => res.json())
+      .then(json => res.json(json));
   } catch (error) {
     logger.debug("getForecast Endpoint -> ERROR in SERVER SIDE POST", error);
   }

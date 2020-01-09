@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "geonames.js": "^2.3.0",
+    "node-fetch": "^2.6.0",
     "ulog": "^1.1.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
