@@ -19,7 +19,7 @@ module.exports = {
     port: 3000, // Defaults to 8080
     proxy: {
       "/getSentiment": {
-        target: "http://localhost:8000",
+        target: "http://localhost:8081",
         secure: false
       }
     }
@@ -57,4 +57,3 @@ module.exports = {
     })
   ]
 };
-
