@@ -1,18 +1,29 @@
 import { plg, isUrlValid } from "./helper";
 
-describe("Helper function Testst", () => {
-  test("Input is Equal to Output", () => {
-    let input = {
-      url: expect.any(String),
-      polarity: expect.any(String),
-      confidence: expect.any(String),
-      text: expect.any(String)
-    };
-    expect(plg(input)).toEqual(input);
+
+
+
+
+//Post Route Testcases
+describe("postData Route Test", () => {
+  test("It should be a function and return True", async () => {
+    expect(postData).toBeDefined();
   });
 
-  test("Input is a URL", () => {
-    let input = "https://www.4arge.com/";
-    expect(isUrlValid(input)).toBeTrue;
+  test("It should be a function", async () => {
+    expect(typeof postData).toBe("function");
+  });
+});
+
+
+
+//Get Started function Testcases
+describe("getStarted Function Tests", () => {
+  test("It should be a function and return True", async () => {
+    expect(getStarted).toBeDefined();
+  });
+
+  test("It should be a function", async () => {
+    expect(typeof getStarted).toBe("function");
   });
 });

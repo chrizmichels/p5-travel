@@ -1,4 +1,5 @@
 import ulog from "ulog";
+import { postData } from "./servercalls";
 
 /* Global Variables */
 let data = [];
@@ -25,6 +26,51 @@ function plg(data) {
     url: "analyseURL"
   };
 }
+
+/* Function called by event listener */
+const getStarted = async event => {
+  try {
+    event.preventDefault();
+
+    log.debug(
+      "Client/busineslogic.js/getStarted -> ::::: Get Results Clicked :::::"
+    );
+    //Get URL from UI
+    let url = document.getElementById("name").value;
+
+    log.debug("Client/busineslogic.js/getStarted -> Get URL from UI: ", url);
+
+    if (isUrlValid(url)) {
+      //data.push(url);
+      // console.log(url);
+      projectData = {};
+      projectData = { url: url };
+      log.debug(
+        "Client/busineslogic.js/getStarted -> Call postData",
+        projectData
+      );
+
+      //Send URL to /getSentiment Server enpoint
+      //Return will be an json Object
+      const data = await postData("/getSentiment", projectData);
+
+      log.debug(
+        "Client/busineslogic.js/getStarted -> Data returned from postDAta Call:",
+        data
+      );
+
+      //Update UI with result from server response
+      updateUI(data);
+    } else {
+      alert("Please enter a valid URL");
+    }
+  } catch (err) {
+    log.debug(
+      "Client/busineslogic.js/getStarted -> ERROR in Client Side - getStarted",
+      error
+    );
+  }
+};
 
 //Update UI
 const updateUI = async data => {
@@ -53,4 +99,4 @@ const updateUI = async data => {
   }
 };
 
-export { isUrlValid, updateUI, plg };
+export { isUrlValid, updateUI, getStarted, plg };

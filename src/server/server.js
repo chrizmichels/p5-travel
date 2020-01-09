@@ -32,6 +32,18 @@ logger.debug(`Server/index.js -> Aylien Text Api Object: `, textapi);
 Aylien Setup End
 */
 
+
+/* Geonames API Setup - START
+
+
+
+
+
+
+Geonames API Setup - END */
+
+
+
 // Setup empty JS object to act as endpoint for all routes
 let projectData = {};
 let data = [];

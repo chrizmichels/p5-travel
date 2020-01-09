@@ -1,6 +1,6 @@
 /* Imports */
 import ulog from "ulog";
-import { getStarted } from "./servercalls";
+import { getStarted } from "./businesslogic";
 
 /* Global Variables */
 let data = [];
