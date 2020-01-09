@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Udacity Project 4</title>
+  </head>
+
+    <body>
+
+        <header>
+            <div class="">
+                Logo
+            </div>
+            <div class="">
+                //navigation//
+            </div>
+        </header>
+
+        <main>
+            <section>
+                <form class="" onsubmit="Client.getStarted(event)">
+                    <input id="name" type="text" name="input" value=""  placeholder="URL">
+                    <input id="generate" type="submit" onclick="Client.getStarted(event)" onsubmit="Client.getStarted(event)">
+                </form>
+            <section>
+
+            <section>
+                <strong>Form Results:</strong>
+                <div id="url"></div>
+                <div id="pol"></div>
+                <div id="conf"></div>
+                <div id="restxt"></div>
+
+            </section>
+        </main>
+
+        <footer>
+            <p>This is a footer</p>
+        </footer>
+        <script>
+            // Check that service workers are supported
+           if ('serviceWorker' in navigator) {
+                // Use the window load event to keep the page load performant
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js');
+                });
+            }
+     </script>
+ 
+ 
+</body>
+</html>
