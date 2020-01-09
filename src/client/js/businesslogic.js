@@ -52,9 +52,11 @@ const getLocationCoordinates = async event => {
 
     const data = await postData("/getLocation", projectData);
 
+    const forecast = await postData("/getForecast", data);
+
     log.debug(
-      "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
-      data
+      "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
+      forecast
     );
 
     await updateUILocation(data);
@@ -92,20 +94,12 @@ const getStarted = async event => {
       //Return will be an json Object
       const data = await postData("/getSentiment", projectData);
 
-      /*     log.debug(
-        "Client/busineslogic.js/getStarted -> Data returned from postDAta Call:",
-        data
-      ); */
-
-      /*       const data2 = await postData("/getLocation", {
-        location: "Kerpen (Eifel)"
-      });
-
+      /* 
       log.debug(
         "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
         data2
-      ); */
-
+      ); 
+ */
       //Update UI with result from server response
       updateUI(data);
     } else {

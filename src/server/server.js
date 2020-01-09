@@ -21,9 +21,6 @@ const geonames = new Geonames({
   encoding: "JSON"
 });
 
-/* Setup Dark Sky API */
-const drkSkyAPIKey = process.env.API_ID
-
 /* 
 Aylien Setup Start
 */
@@ -38,9 +35,17 @@ var textapi = new aylien({
   application_key: process.env.API_KEY
 });
 
+/* Setup Dark Sky API */
+const drkSkyAPIKey = process.env.SKY_API_KEY;
+logger.debug(`Server/index.js -> Your API key is ${process.env.SKY_API_KEY}`);
+
+let drkSkyLat = "42.3601";
+let drkSkyLon = "-71.0589";
+let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon}`;
+
 //Check if API Keys are readable
-logger.debug(`Server/index.js -> Your API key is ${process.env.API_KEY}`);
-logger.debug(`Server/index.js -> Aylien Text Api Object: `, textapi);
+// logger.debug(`Server/index.js -> Your API key is ${process.env.API_KEY}`);
+// logger.debug(`Server/index.js -> Aylien Text Api Object: `, textapi);
 /*  
 Aylien Setup End
 */
@@ -115,8 +120,32 @@ app.post("/getLocation", async (req, res) => {
 });
 
 //Get Weather Forecast
+app.post("/getForecast", async (req, res) => {
+  data = [];
+  data.push(req.body);
+  logger.debug("getForecast Endpoint -> POST received with: ", data);
 
+  try {
+    drkSkyLat = data[0].cleanData.lat;
+    drkSkyLon = data[0].cleanData.lng;
 
+    let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon}`;
+
+    logger.debug(
+      "getForecast Endpoint -> Server side POST - fetch url: ",
+      drkSkyURL
+    );
+    const result = await fetch(url);
+    logger.debug(
+      "getForecast Endpoint -> Server side POST - fetch RESULT: ",
+      result
+    );
+
+    res.json({ result });
+  } catch (error) {
+    logger.debug("getForecast Endpoint -> ERROR in SERVER SIDE POST", error);
+  }
+});
 
 app.post("/getSentiment", async (req, res) => {
   data = [];
