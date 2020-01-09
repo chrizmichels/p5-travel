@@ -6,11 +6,11 @@
     ]
   },
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest",
     "restart": "npm run build-prod & npm run start",
-    "start": "node src/server/index.js",
+    "start": "node src/server/server.js",
     "build-prod": "webpack --config webpack.prod.js",
     "build-dev": "webpack --config webpack.dev.js",
     "build-dev-srv": "webpack-dev-server  --config webpack.dev.js --open"
