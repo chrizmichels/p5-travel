@@ -3,13 +3,23 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const asyncHandler = require("express-async-handler");
+const Geonames = require("geonames.js");
+const Logic = require("./logic.js");
+
 //Setup Logging
 const getLogger = require("webpack-log");
-const logger = getLogger({ name: "wbpck-yoda", timestamp: true });
+const logger = getLogger({ name: "server-yoda", timestamp: true });
 
 //Switch Log Level
 // logger.level = "silent";
 logger.level = "debug";
+
+/* Setup Geonames  */
+const geonames = new Geonames({
+  username: "chrizmichels",
+  lan: "de",
+  encoding: "JSON"
+});
 
 /* 
 Aylien Setup Start
@@ -32,17 +42,11 @@ logger.debug(`Server/index.js -> Aylien Text Api Object: `, textapi);
 Aylien Setup End
 */
 
-
-/* Geonames API Setup - START
-
-
-
-
-
-
-Geonames API Setup - END */
-
-
+/* Geonames API Setup - START */
+const geoUserName = process.env.GEO_USER;
+let searchLocation = "";
+let maxRows = 10;
+/* Geonames API Setup - END */
 
 // Setup empty JS object to act as endpoint for all routes
 let projectData = {};
@@ -80,6 +84,33 @@ app.listen(port, function() {
 });
 
 // Post Route
+app.post("/getLocation", async (req, res) => {
+  data = [];
+  data.push(req.body);
+  logger.debug("/getLocation Endpoint -> POST received with: ", data);
+
+  try {
+    let locationToFind = data[0].location;
+    logger.debug(
+      "/getLocation Endpoint -> Server side POST - Call Geonames with:",
+      locationToFind
+    );
+    const continents = await geonames.search({ q: locationToFind });
+    /*  logger.debug(
+      "/getLocation Endpoint -> Server side POST - Geonames RESPONSE:",
+      continents
+    ); */
+
+    let cleanData = await Logic.cleanCountries(locationToFind, continents);
+    logger.debug("/getLocation Endpoint -> Cleaned Location:", cleanData);
+    res.json({
+      cleanData
+    });
+  } catch (error) {
+    logger.debug("/getLocation Endpoint -> ERROR in SERVER SIDE POST", error);
+  }
+});
+
 app.post("/getSentiment", async (req, res) => {
   data = [];
   data.push(req.body);
@@ -87,6 +118,7 @@ app.post("/getSentiment", async (req, res) => {
 
   try {
     let analyseURL = data[0].url;
+
     logger.debug(
       "/getSentiment Endpoint -> Server side POST - Call getSentiment with:",
       analyseURL

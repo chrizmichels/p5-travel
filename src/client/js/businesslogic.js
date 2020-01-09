@@ -28,6 +28,44 @@ function plg(data) {
 }
 
 /* Function called by event listener */
+const getLocationCoordinates = async event => {
+  try {
+    event.preventDefault();
+
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> ::::: Get Results Clicked :::::"
+    );
+    //Get URL from UI
+    let location = document.getElementById("name").value;
+
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> Get URL from UI: ",
+      location
+    );
+
+    projectData = {};
+    projectData = { location: location };
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> Call postData",
+      projectData
+    );
+
+    const data = await postData("/getLocation", projectData);
+
+    log.debug(
+      "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
+      data
+    );
+
+    await updateUILocation(data);
+  } catch (error) {
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> ERROR in Client Side - getStarted",
+      error
+    );
+  }
+};
+
 const getStarted = async event => {
   try {
     event.preventDefault();
@@ -54,10 +92,19 @@ const getStarted = async event => {
       //Return will be an json Object
       const data = await postData("/getSentiment", projectData);
 
-      log.debug(
+      /*     log.debug(
         "Client/busineslogic.js/getStarted -> Data returned from postDAta Call:",
         data
-      );
+      ); */
+
+      /*       const data2 = await postData("/getLocation", {
+        location: "Kerpen (Eifel)"
+      });
+
+      log.debug(
+        "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
+        data2
+      ); */
 
       //Update UI with result from server response
       updateUI(data);
@@ -99,4 +146,33 @@ const updateUI = async data => {
   }
 };
 
-export { isUrlValid, updateUI, getStarted, plg };
+const updateUILocation = async data => {
+  try {
+    log.debug(
+      `Client/busineslogic.js/updateUI ->  Update UI with data Object`,
+      data
+    );
+
+    /*   const request = await fetch("/getSentiment");
+      const allData = await request.json(); */
+    // const allData = data;
+
+    log.debug("Client/busineslogic.js/const updateUILocation", data);
+    document.getElementById(
+      "location"
+    ).innerHTML = `Name: ${data.cleanData.name}`;
+    document.getElementById(
+      "lat"
+    ).innerHTML = `Latitude: ${data.cleanData.lat}`;
+    document.getElementById(
+      "lng"
+    ).innerHTML = `Longitude: ${data.cleanData.lng}`;
+  } catch (error) {
+    log.debug(
+      "Client/busineslogic.js/updateUILocation -> ERROR in Client Side updateUILocation",
+      error
+    );
+  }
+};
+
+export { isUrlValid, updateUI, getStarted, plg, getLocationCoordinates };
