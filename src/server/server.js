@@ -21,6 +21,9 @@ const geonames = new Geonames({
   encoding: "JSON"
 });
 
+/* Setup Dark Sky API */
+const drkSkyAPIKey = process.env.API_ID
+
 /* 
 Aylien Setup Start
 */
@@ -110,6 +113,10 @@ app.post("/getLocation", async (req, res) => {
     logger.debug("/getLocation Endpoint -> ERROR in SERVER SIDE POST", error);
   }
 });
+
+//Get Weather Forecast
+
+
 
 app.post("/getSentiment", async (req, res) => {
   data = [];
