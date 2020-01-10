@@ -64,6 +64,13 @@ const getLocationCoordinates = async event => {
       forecast
     );
 
+    const pictures = await postData("/getPictures", projectData);
+
+    log.debug(
+      "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
+      pictures
+    );
+
     await updateUILocation(data);
   } catch (error) {
     log.debug(

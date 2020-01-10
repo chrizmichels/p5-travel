@@ -38,11 +38,18 @@ var textapi = new aylien({
 
 /* Setup Dark Sky API */
 const drkSkyAPIKey = process.env.SKY_API_KEY;
-logger.debug(`Server/index.js -> Your API key is ${process.env.SKY_API_KEY}`);
+logger.debug(`Server/index.js -> Your Dark Sky API key is ${drkSkyAPIKey}`);
 
 let drkSkyLat = "42.3601";
 let drkSkyLon = "-71.0589";
 let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon}`;
+
+//Setup PixBay API - PIXBAY_API_KEY
+const pxbayAPIKey = process.env.PIXBAY_API_KEY;
+logger.debug(`Server/index.js -> Your PixBay API key is ${pxbayAPIKey}`);
+
+let pxbaySearch = "";
+let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo`;
 
 //Check if API Keys are readable
 // logger.debug(`Server/index.js -> Your API key is ${process.env.API_KEY}`);
@@ -142,6 +149,30 @@ app.post("/getForecast", async (req, res) => {
       .then(json => res.json(json));
   } catch (error) {
     logger.debug("getForecast Endpoint -> ERROR in SERVER SIDE POST", error);
+  }
+});
+
+//Get Weather Forecast
+app.post("/getPictures", async (req, res) => {
+  data = [];
+  data.push(req.body);
+  logger.debug("getPictures Endpoint -> POST received with: ", data);
+
+  try {
+    pxbaySearch = data[0].location;
+
+    let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo&lang=de`;
+
+    logger.debug(
+      "getPictures Endpoint -> Server side POST - fetch url: ",
+      pxbayURL
+    );
+
+    fetch(pxbayURL)
+      .then(res => res.json())
+      .then(json => res.json(json));
+  } catch (error) {
+    logger.debug("getPictures Endpoint -> ERROR in SERVER SIDE POST", error);
   }
 });
 
