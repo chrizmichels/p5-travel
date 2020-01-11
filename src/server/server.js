@@ -6,6 +6,8 @@ const asyncHandler = require("express-async-handler");
 const Geonames = require("geonames.js");
 const Logic = require("./logic.js");
 const fetch = require("node-fetch");
+const axios = require("axios");
+const { parse, stringify } = require("flatted/cjs");
 
 //Setup Logging
 const getLogger = require("webpack-log");
@@ -147,6 +149,12 @@ app.post("/getForecast", async (req, res) => {
     fetch(drkSkyURL)
       .then(res => res.json())
       .then(json => res.json(json));
+
+    /*     await axios.get(drkSkyURL).then(response => {
+      logger.debug("getForecast Endpoint -> POST received with: ", response);
+
+      res.json(stringify(response)); 
+    });*/
   } catch (error) {
     logger.debug("getForecast Endpoint -> ERROR in SERVER SIDE POST", error);
   }
@@ -161,16 +169,25 @@ app.post("/getPictures", async (req, res) => {
   try {
     pxbaySearch = data[0].location;
 
-    let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo&lang=de`;
+    let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo&lang=de&category=buildings`;
 
     logger.debug(
       "getPictures Endpoint -> Server side POST - fetch url: ",
       pxbayURL
     );
+    /* 
+    await axios.get(pxbayURL).then(response => {
+      logger.debug("getPictures Endpoint -> POST received with: ", response);
+
+      res.json(stringify(response));
+    }); */
 
     fetch(pxbayURL)
       .then(res => res.json())
-      .then(json => res.json(json));
+      .then(json => {
+        logger.debug("getPictures Endpoint -> POST received with: ", json);
+        res.json(json);
+      });
   } catch (error) {
     logger.debug("getPictures Endpoint -> ERROR in SERVER SIDE POST", error);
   }
