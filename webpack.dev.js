@@ -9,6 +9,15 @@ module.exports = {
   output: {
     libraryTarget: "var",
     library: "Client"
+    /*   // Create a dir dist in the project root
+    path: path.resolve(__dirname, "dist"),
+    // filename
+    filename: "bundle.js",
+    // The URL relative to the HTML file
+    // Since we are starting with '/', webpack will always look
+    // into http://example.com/dist/bundle.js
+    // no matter the current URL
+    publicPath: "./src/client/media/" */
   },
   mode: "development",
   devtool: "source-map",
@@ -19,6 +28,18 @@ module.exports = {
     port: 3000, // Defaults to 8080
     proxy: {
       "/getSentiment": {
+        target: "http://localhost:8085",
+        secure: false
+      },
+      "/getForecast": {
+        target: "http://localhost:8085",
+        secure: false
+      },
+      "/getPictures": {
+        target: "http://localhost:8085",
+        secure: false
+      },
+      "/getLocation": {
         target: "http://localhost:8085",
         secure: false
       }
@@ -34,6 +55,10 @@ module.exports = {
       {
         test: /\.scss$/,
         use: ["style-loader", "css-loader", "sass-loader"]
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: ["file-loader"]
       }
     ]
   },

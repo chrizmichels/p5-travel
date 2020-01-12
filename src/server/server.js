@@ -8,6 +8,7 @@ const Logic = require("./logic.js");
 const fetch = require("node-fetch");
 const axios = require("axios");
 const { parse, stringify } = require("flatted/cjs");
+const download2 = require("image-downloader");
 
 //Setup Logging
 const getLogger = require("webpack-log");
@@ -109,17 +110,22 @@ app.post("/getLocation", async (req, res) => {
 
   try {
     let locationToFind = data[0].location;
+    let date = data[0].date;
     logger.debug(
       "/getLocation Endpoint -> Server side POST - Call Geonames with:",
       locationToFind
     );
     const continents = await geonames.search({ q: locationToFind });
-    /*  logger.debug(
+    /*    logger.debug(
       "/getLocation Endpoint -> Server side POST - Geonames RESPONSE:",
       continents
     ); */
 
-    let cleanData = await Logic.cleanCountries(locationToFind, continents);
+    let cleanData = await Logic.cleanCountries(
+      date,
+      locationToFind,
+      continents
+    );
     logger.debug("/getLocation Endpoint -> Cleaned Location:", cleanData);
     res.json({
       cleanData
@@ -138,8 +144,13 @@ app.post("/getForecast", async (req, res) => {
   try {
     drkSkyLat = data[0].cleanData.lat;
     drkSkyLon = data[0].cleanData.lng;
+    let date = `${data[0].cleanData.date}`; // 00:00:00 GMT`;
+    let unixTime = Logic.toTimestamp(date);
+    logger.debug("getForecast Endpoint -> unixTime: ", unixTime);
 
-    let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon}`;
+    //unixTime = Date.parse(date);
+
+    let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon},${unixTime}?lang=de&units=si#`;
 
     logger.debug(
       "getForecast Endpoint -> Server side POST - fetch url: ",
@@ -160,14 +171,17 @@ app.post("/getForecast", async (req, res) => {
   }
 });
 
-//Get Weather Forecast
+//Get Pictures
 app.post("/getPictures", async (req, res) => {
   data = [];
   data.push(req.body);
   logger.debug("getPictures Endpoint -> POST received with: ", data);
 
   try {
-    pxbaySearch = data[0].location;
+    pxbaySearch = `${encodeURIComponent(
+      data[0].cleanData.name
+    )}+${encodeURIComponent(data[0].cleanData.country)}`;
+    logger.debug("getPictures Endpoint -> Server side POST - req body: ", data);
 
     let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo&lang=de&category=buildings`;
 
@@ -185,11 +199,50 @@ app.post("/getPictures", async (req, res) => {
     fetch(pxbayURL)
       .then(res => res.json())
       .then(json => {
-        logger.debug("getPictures Endpoint -> POST received with: ", json);
+        // logger.debug("getPictures Endpoint -> POST received with: ", json);
         res.json(json);
       });
   } catch (error) {
     logger.debug("getPictures Endpoint -> ERROR in SERVER SIDE POST", error);
+  }
+});
+
+//Get Pictures
+app.post("/getCleanData", async (req, res) => {
+  let data;
+  data = req.body;
+  logger.debug("getCleanData Endpoint -> POST received with: ", data);
+
+  try {
+    const cleanData = await Logic.cleanData(data);
+    logger.debug(
+      "getCleanData Endpoint -> Data returned from Cleaning: ",
+      cleanData
+    );
+
+    res.json(cleanData);
+  } catch (error) {
+    logger.debug("getCleanData Endpoint -> ERROR in SERVER SIDE POST", error);
+  }
+});
+
+app.post("/copyImgFiles", async (req, res) => {
+  try {
+    let data;
+    data = req.body;
+    logger.debug("copyImgFiles Endpoint -> POST received with: ", data);
+    logger.debug(
+      `copyImgFiles Endpoint -> From ${data.ImageUrlFrom} To ${data.ImageUrlTo}`
+    );
+    const response = await Logic.copyFiles(data.ImageUrlFrom, data.ImageUrlTo);
+    logger.debug(
+      "copyImgFiles Endpoint -> Data returned from copy: ",
+      response
+    );
+
+    res.json(response);
+  } catch (error) {
+    logger.debug("getCleanData Endpoint -> ERROR in SERVER SIDE POST", error);
   }
 });
 

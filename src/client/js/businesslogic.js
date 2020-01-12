@@ -37,6 +37,7 @@ const getLocationCoordinates = async event => {
     );
     //Get URL from UI
     let location = document.getElementById("name").value;
+    let date = document.getElementById("date").value;
 
     log.debug(
       "Client/busineslogic.js/getLocationCoordinates -> Get URL from UI: ",
@@ -44,7 +45,10 @@ const getLocationCoordinates = async event => {
     );
 
     projectData = {};
-    projectData = { location: location };
+    projectData = {
+      location: location,
+      date: date
+    };
     log.debug(
       "Client/busineslogic.js/getLocationCoordinates -> Call postData",
       projectData
@@ -59,22 +63,139 @@ const getLocationCoordinates = async event => {
 
     const forecast = await postData("/getForecast", data);
 
-    log.debug(
+    /*     log.debug(
       "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
       forecast
-    );
+    ); */
 
-    const pictures = await postData("/getPictures", projectData);
-
+    const pictures = await postData("/getPictures", data);
+    /* 
     log.debug(
       "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
       pictures
+    ); */
+
+    let dataToClean = [];
+    dataToClean.push(data);
+    dataToClean.push(forecast);
+    dataToClean.push(pictures);
+
+    log.debug(
+      "Client/busineslogic.js/getCleanData-> Data to Clean:",
+      dataToClean
     );
 
-    await updateUILocation(data);
+    const cleanData = await postData("/getCleanData", dataToClean);
+
+    log.debug(
+      "Client/busineslogic.js/getCleanData-> Data returned from postDAta Call:",
+      cleanData
+    );
+
+    wait(5000);
+
+    const copyData = await postData("/copyImgFiles", cleanData);
+    log.debug(
+      "Client/busineslogic.js/copyImgData-> Data returned from postDAta Call:",
+      copyData
+    );
+
+    await updateUILocation(cleanData);
   } catch (error) {
     log.debug(
       "Client/busineslogic.js/getLocationCoordinates -> ERROR in Client Side - getStarted",
+      error
+    );
+  }
+};
+
+function wait(ms) {
+  var start = new Date().getTime();
+  var end = start;
+  while (end < start + ms) {
+    end = new Date().getTime();
+  }
+}
+
+const updateUILocation = async data => {
+  try {
+    log.debug(
+      `Client/busineslogic.js/updateUI ->  Update UI with data Object`,
+      data
+    );
+
+    /*   const request = await fetch("/getSentiment");
+      const allData = await request.json(); */
+    // const allData = data;
+
+    log.debug("Client/busineslogic.js/const updateUILocation", data);
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.Location
+    );
+    document.getElementById("location").innerHTML = `City: ${data.Location}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.Country
+    );
+    document.getElementById("country").innerHTML = `Country: ${data.Country}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.Latitude
+    );
+    document.getElementById("lat").innerHTML = `Latitude: ${data.Latitude}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.Longitude
+    );
+    document.getElementById("lng").innerHTML = `Longitude: ${data.Longitude}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.Date
+    );
+    document.getElementById("date").innerHTML = `Longitude: ${data.Date}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.CurrentWthrSummary
+    );
+    document.getElementById(
+      "currentwthrsummary"
+    ).innerHTML = `Current Weather: ${data.CurrentWthrSummary}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.HourlyWthrSummary
+    );
+    document.getElementById(
+      "hourlywthrsummary"
+    ).innerHTML = `Hourly Forecast: ${data.HourlyWthrSummary}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.ImageTags
+    );
+    document.getElementById(
+      "imagetags"
+    ).innerHTML = `Image Tags: ${data.ImageTags}`;
+    //
+
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.ImageUrl
+    );
+
+    document.getElementById(
+      "image"
+    ).innerHTML = ` <img width="100%" height="auto" src="${data.ImageUrlTo}" alt="${data.ImageTags}"
+  />`;
+  } catch (error) {
+    log.debug(
+      "Client/busineslogic.js/updateUILocation -> ERROR in Client Side updateUILocation",
       error
     );
   }
@@ -147,35 +268,6 @@ const updateUI = async data => {
   } catch (error) {
     log.debug(
       "Client/busineslogic.js/updateUI -> ERROR in Client Side updateUI",
-      error
-    );
-  }
-};
-
-const updateUILocation = async data => {
-  try {
-    log.debug(
-      `Client/busineslogic.js/updateUI ->  Update UI with data Object`,
-      data
-    );
-
-    /*   const request = await fetch("/getSentiment");
-      const allData = await request.json(); */
-    // const allData = data;
-
-    log.debug("Client/busineslogic.js/const updateUILocation", data);
-    document.getElementById(
-      "location"
-    ).innerHTML = `Name: ${data.cleanData.name}`;
-    document.getElementById(
-      "lat"
-    ).innerHTML = `Latitude: ${data.cleanData.lat}`;
-    document.getElementById(
-      "lng"
-    ).innerHTML = `Longitude: ${data.cleanData.lng}`;
-  } catch (error) {
-    log.debug(
-      "Client/busineslogic.js/updateUILocation -> ERROR in Client Side updateUILocation",
       error
     );
   }
