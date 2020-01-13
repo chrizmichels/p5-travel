@@ -115,6 +115,8 @@ app.post("/getLocation", async (req, res) => {
       "/getLocation Endpoint -> Server side POST - Call Geonames with:",
       locationToFind
     );
+
+    
     const continents = await geonames.search({ q: locationToFind });
     /*    logger.debug(
       "/getLocation Endpoint -> Server side POST - Geonames RESPONSE:",

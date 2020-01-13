@@ -29,98 +29,6 @@ function plg(data) {
   };
 }
 
-//////////////////////
-const getLocationCoordinates2 = async event => {
-  try {
-    event.preventDefault();
-
-    log.debug(
-      "Client/busineslogic.js/getLocationCoordinates -> ::::: Get Results Clicked :::::"
-    );
-    //Get URL from UI
-    let location = document.getElementById("name").value;
-    let date = document.getElementById("date").value;
-
-    log.debug(
-      "Client/busineslogic.js/getLocationCoordinates -> Get URL from UI: ",
-      location
-    );
-
-    projectData = {};
-    projectData = {
-      location: location,
-      date: date
-    };
-    log.debug(
-      "Client/busineslogic.js/getLocationCoordinates -> Call postData",
-      projectData
-    );
-
-    await postData("/getLocation", projectData)
-      .then(data => {
-        log.debug(
-          "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
-          data
-        );
-
-        gData = data;
-
-        gForecast = postData("/getForecast", gData);
-      })
-      .then(() => {
-        gPictures = postData("/getPictures", gData);
-      })
-      .then(() => {
-        let dataToClean = [];
-        dataToClean.push(gData);
-        dataToClean.push(gForecast);
-        dataToClean.push(gPictures);
-
-        log.debug(
-          "Client/busineslogic.js/getCleanData-> Data to Clean:",
-          dataToClean
-        );
-
-        gCleanData = postData("/getCleanData", dataToClean);
-
-        log.debug(
-          "Client/busineslogic.js/getCleanData-> Data returned from postDAta Call:",
-          gCleanData
-        );
-      })
-      .then(() => {
-        gCopyData = postData("/copyImgFiles", gCleanData);
-        log.debug(
-          "Client/busineslogic.js/copyImgData-> Data returned from postDAta Call:",
-          gCopyData
-        );
-      })
-      .then(() => {
-        updateUILocation(gCleanData);
-      });
-
-    /*     log.debug(
-      "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
-      forecast
-    ); */
-
-    /* 
-    log.debug(
-      "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
-      pictures
-    ); */
-
-    // wait(5000);
-  } catch (error) {
-    log.debug(
-      "Client/busineslogic.js/getLocationCoordinates -> ERROR in Client Side - getStarted",
-      error
-    );
-  }
-};
-
-/////////////////////
-
 /* Function called by event listener */
 const getLocationCoordinates = async event => {
   try {
@@ -132,6 +40,9 @@ const getLocationCoordinates = async event => {
     //Get URL from UI
     let location = document.getElementById("name").value;
     let date = document.getElementById("date").value;
+
+    //If travel date is within a week -> Get Current Weather forecast
+    //ELSE -> Get predicted forecast
 
     log.debug(
       "Client/busineslogic.js/getLocationCoordinates -> Get URL from UI: ",
@@ -175,6 +86,11 @@ const getLocationCoordinates = async event => {
     dataToClean.push(pictures);
 
     log.debug(
+      "Client/busineslogic.js/getLocationCoordinates-> Data Object:",
+      dataToClean
+    );
+
+    log.debug(
       "Client/busineslogic.js/getCleanData-> Data to Clean:",
       dataToClean
     );
@@ -185,8 +101,6 @@ const getLocationCoordinates = async event => {
       "Client/busineslogic.js/getCleanData-> Data returned from postDAta Call:",
       cleanData
     );
-
-    wait(5000);
 
     const copyData = await postData("/copyImgFiles", cleanData);
     log.debug(
@@ -203,24 +117,12 @@ const getLocationCoordinates = async event => {
   }
 };
 
-function wait(ms) {
-  var start = new Date().getTime();
-  var end = start;
-  while (end < start + ms) {
-    end = new Date().getTime();
-  }
-}
-
 const updateUILocation = async data => {
   try {
     log.debug(
       `Client/busineslogic.js/updateUI ->  Update UI with data Object`,
       data
     );
-
-    /*   const request = await fetch("/getSentiment");
-      const allData = await request.json(); */
-    // const allData = data;
 
     log.debug("Client/busineslogic.js/const updateUILocation", data);
     log.debug(
@@ -268,6 +170,18 @@ const updateUILocation = async data => {
     document.getElementById(
       "hourlywthrsummary"
     ).innerHTML = `Hourly Forecast: ${data.HourlyWthrSummary}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.minTemp
+    );
+    document.getElementById("minTemp").innerHTML = `Min Temp: ${data.minTemp}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.maxTemp
+    );
+    document.getElementById("maxTemp").innerHTML = `Max Temp: ${data.maxTemp}`;
     //
     log.debug(
       "Client/busineslogic.js/const updateUILocation -> set ",
@@ -367,11 +281,4 @@ const updateUI = async data => {
   }
 };
 
-export {
-  isUrlValid,
-  updateUI,
-  getStarted,
-  plg,
-  getLocationCoordinates,
-  getLocationCoordinates2
-};
+export { isUrlValid, updateUI, getStarted, plg, getLocationCoordinates };

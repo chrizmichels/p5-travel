@@ -95,6 +95,34 @@ module.exports.copyFiles = async (From, To) => {
   }
 };
 
+getHighLowTemp = hourlyData => {
+  try {
+    let minTemp = hourlyData[0].temperature;
+    let maxTemp = hourlyData[0].temperature;
+
+    for (const el of hourlyData) {
+      logger.debug(`Server/logic/getHighLowTemp`, el);
+
+      if (el.temperature < minTemp) {
+        minTemp = el.temperature;
+      }
+      if (el.temperature > maxTemp) {
+        maxTemp = el.temperature;
+      }
+    }
+
+    logger.debug(
+      `Server/logic/getHighLowTemp -> MIN Temp: ${minTemp} // MAX Temp: ${maxTemp}`
+    );
+    return {
+      minTemp: minTemp,
+      maxTemp: maxTemp
+    };
+  } catch (error) {
+    logger.debug(`ERROR in Server/logic/getHighLowTemp`, error);
+  }
+};
+
 module.exports.cleanData = async data => {
   try {
     let cleanData = {};
@@ -102,18 +130,11 @@ module.exports.cleanData = async data => {
     let imageTags = "";
     let imageUrl2 = "";
 
+    const minMaxTemp = getHighLowTemp(data[1].hourly.data);
+
     if (data[2].totalHits > 0) {
       imageUrl = data[2].hits[0].webformatURL;
       imageTags = data[2].hits[0].tags;
-
-      imageUrl2 = await downloadImage(imageUrl);
-      logger.debug(
-        `Server/logic/cleanData/DownloadImage -> Returned with:  `,
-        imageUrl2
-      );
-
-      //Copy files to dist and change full path
-      imageUrl = getFileNames(imageUrl2);
 
       cleanData = {
         Location: data[0].cleanData.name,
@@ -123,10 +144,13 @@ module.exports.cleanData = async data => {
         Country: data[0].cleanData.country,
         CurrentWthrSummary: data[1].currently.summary,
         HourlyWthrSummary: data[1].hourly.summary,
+        minTemp: minMaxTemp.minTemp,
+        maxTemp: minMaxTemp.maxTemp,
         ImageUrlTo: imageUrl,
-        ImageUrlFrom: `/${imageUrl2}`,
+        ImageUrlFrom: imageUrl,
         ImageTags: imageTags
       };
+
       logger.debug(
         `Server/logic/cleanData -> JSON Object created:  `,
         cleanData
@@ -144,8 +168,10 @@ module.exports.cleanData = async data => {
         Country: data[0].cleanData.country,
         CurrentWthrSummary: data[1].currently.summary,
         HourlyWthrSummary: data[1].hourly.summary,
+        minTemp: minMaxTemp.minTemp,
+        maxTemp: minMaxTemp.maxTemp,
         ImageUrlTo: imageUrl,
-        ImageUrlFrom: `/${imageUrl2}`,
+        ImageUrlFrom: imageUrl,
         ImageTags: imageTags
       };
       return cleanData;
@@ -160,7 +186,7 @@ downloadImage = async url => {
     // Download to a directory and save with the original filename
     const options = {
       url: url,
-      dest: "./src/server/media/" // "./src/client/media/" // Save to /path/to/dest/image.jpg
+      dest: "./src/client/media/" // "./src/client/media/" // Save to /path/to/dest/image.jpg
     };
 
     logger.debug(

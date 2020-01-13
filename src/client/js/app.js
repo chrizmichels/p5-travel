@@ -1,10 +1,6 @@
 /* Imports */
 import ulog from "ulog";
-import {
-  getStarted,
-  getLocationCoordinates,
-  getLocationCoordinates2
-} from "./businesslogic";
+import { getStarted, getLocationCoordinates } from "./businesslogic";
 
 /* Global Variables */
 let data = [];
@@ -19,4 +15,4 @@ log.level = log.DEBUG;
 // Event listener to add function to existing HTML DOM element
 const el = document.getElementById("generate");
 log.debug(`Client/app.js->  Add Event Listener to -> `, el);
-el.addEventListener("click", getLocationCoordinates2);
+el.addEventListener("click", getLocationCoordinates);
