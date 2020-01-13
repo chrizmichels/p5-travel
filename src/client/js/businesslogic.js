@@ -9,6 +9,8 @@ let projectData = {};
 const log = ulog("busineslogic.js");
 log.level = log.DEBUG;
 
+let gData, gForecast, gPictures, gCleanData, gCopyData;
+
 //Validate URL
 function isUrlValid(userInput) {
   var res = userInput.match(
@@ -26,6 +28,98 @@ function plg(data) {
     url: "analyseURL"
   };
 }
+
+//////////////////////
+const getLocationCoordinates2 = async event => {
+  try {
+    event.preventDefault();
+
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> ::::: Get Results Clicked :::::"
+    );
+    //Get URL from UI
+    let location = document.getElementById("name").value;
+    let date = document.getElementById("date").value;
+
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> Get URL from UI: ",
+      location
+    );
+
+    projectData = {};
+    projectData = {
+      location: location,
+      date: date
+    };
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> Call postData",
+      projectData
+    );
+
+    await postData("/getLocation", projectData)
+      .then(data => {
+        log.debug(
+          "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
+          data
+        );
+
+        gData = data;
+
+        gForecast = postData("/getForecast", gData);
+      })
+      .then(() => {
+        gPictures = postData("/getPictures", gData);
+      })
+      .then(() => {
+        let dataToClean = [];
+        dataToClean.push(gData);
+        dataToClean.push(gForecast);
+        dataToClean.push(gPictures);
+
+        log.debug(
+          "Client/busineslogic.js/getCleanData-> Data to Clean:",
+          dataToClean
+        );
+
+        gCleanData = postData("/getCleanData", dataToClean);
+
+        log.debug(
+          "Client/busineslogic.js/getCleanData-> Data returned from postDAta Call:",
+          gCleanData
+        );
+      })
+      .then(() => {
+        gCopyData = postData("/copyImgFiles", gCleanData);
+        log.debug(
+          "Client/busineslogic.js/copyImgData-> Data returned from postDAta Call:",
+          gCopyData
+        );
+      })
+      .then(() => {
+        updateUILocation(gCleanData);
+      });
+
+    /*     log.debug(
+      "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
+      forecast
+    ); */
+
+    /* 
+    log.debug(
+      "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
+      pictures
+    ); */
+
+    // wait(5000);
+  } catch (error) {
+    log.debug(
+      "Client/busineslogic.js/getLocationCoordinates -> ERROR in Client Side - getStarted",
+      error
+    );
+  }
+};
+
+/////////////////////
 
 /* Function called by event listener */
 const getLocationCoordinates = async event => {
@@ -273,4 +367,11 @@ const updateUI = async data => {
   }
 };
 
-export { isUrlValid, updateUI, getStarted, plg, getLocationCoordinates };
+export {
+  isUrlValid,
+  updateUI,
+  getStarted,
+  plg,
+  getLocationCoordinates,
+  getLocationCoordinates2
+};
