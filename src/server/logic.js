@@ -5,6 +5,7 @@ const download2 = require("image-downloader");
 const fs = require("fs");
 /*const https = require("https");
 const request = require("request"); */
+const gdaysToTrip = "";
 
 //Switch Log Level
 // logger.level = "silent";
@@ -35,7 +36,15 @@ module.exports.cleanCountries = async (date, match, data = {}) => {
   }
 };
 
-module.exports.toTimestamp = date => {
+module.exports.getDaysToTrip = (travelUnixTime, todayUnixTime) => {
+  try {
+    return Math.floor((unixTime - nowTime) / 3600 / 24) + 1;
+  } catch (error) {
+    logger.debug(`Server/logic/getDaysToTrip ERROR`, error);
+  }
+};
+
+convertDateToUnixTime = date => {
   try {
     let dateSplit = date.split(".");
     let day = parseInt(dateSplit[0]);
@@ -46,9 +55,34 @@ module.exports.toTimestamp = date => {
     let second = parseInt("00");
 
     var datum = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+    logger.debug(`Server/logic/toTimeStamp -> DATE ${datum}`);
+
     return datum.getTime() / 1000;
   } catch (error) {
-    logger.debug(`Server/logic/toTimeStamp ERROR`, err);
+    logger.debug(`Server/logic/convertDateToUnixTime ERROR`, error);
+  }
+};
+
+module.exports.toTimestamp = date => {
+  try {
+    const unixTime = convertDateToUnixTime(date);
+    const nowTime = Math.floor(Date.now() / 1000);
+
+    logger.debug(`Server/logic/toTimeStamp -> UNIX TIME ${unixTime}`);
+    logger.debug(`Server/logic/toTimeStamp -> NOW TIME ${nowTime}`);
+    logger.debug(
+      `Server/logic/toTimeStamp -> Mlsc to Trip ${unixTime - nowTime}`
+    );
+
+    const daysToTrip = Math.floor((unixTime - nowTime) / 3600 / 24) + 1;
+
+    logger.debug(`Server/logic/toTimeStamp -> Days to Trip ${daysToTrip}`);
+    // gdaysToTrip = daysToTrip;
+
+    return { unixTime: unixTime, daysToTrip: daysToTrip };
+  } catch (error) {
+    logger.debug(`Server/logic/toTimeStamp ERROR`, error);
   }
 };
 
@@ -101,7 +135,7 @@ getHighLowTemp = hourlyData => {
     let maxTemp = hourlyData[0].temperature;
 
     for (const el of hourlyData) {
-      logger.debug(`Server/logic/getHighLowTemp`, el);
+      //logger.debug(`Server/logic/getHighLowTemp`, el);
 
       if (el.temperature < minTemp) {
         minTemp = el.temperature;
@@ -131,6 +165,9 @@ module.exports.cleanData = async data => {
     let imageUrl2 = "";
 
     const minMaxTemp = getHighLowTemp(data[1].hourly.data);
+    const unixTime = convertDateToUnixTime(data[0].cleanData.date);
+    const nowTime = Math.floor(Date.now() / 1000);
+    const daysToTrip = Math.floor((unixTime - nowTime) / 3600 / 24) + 1;
 
     if (data[2].totalHits > 0) {
       imageUrl = data[2].hits[0].webformatURL;
@@ -148,7 +185,8 @@ module.exports.cleanData = async data => {
         maxTemp: minMaxTemp.maxTemp,
         ImageUrlTo: imageUrl,
         ImageUrlFrom: imageUrl,
-        ImageTags: imageTags
+        ImageTags: imageTags,
+        DaysToTrip: daysToTrip
       };
 
       logger.debug(
@@ -172,12 +210,13 @@ module.exports.cleanData = async data => {
         maxTemp: minMaxTemp.maxTemp,
         ImageUrlTo: imageUrl,
         ImageUrlFrom: imageUrl,
-        ImageTags: imageTags
+        ImageTags: imageTags,
+        DaysToTrip: daysToTrip
       };
       return cleanData;
     }
   } catch (error) {
-    logger.debug(`Server/logic imageUrl2`, error);
+    logger.debug(`Server/logic cleanData`, error);
   }
 };
 
@@ -215,25 +254,3 @@ downloadImage = async url => {
     logger.debug(`Server/logic/downloadImage ERROR`, error);
   }
 };
-
-/* var download = function(uri, filename, callback) {
-  request.head(uri, function(err, res, body) {
-    request(uri)
-      .pipe(fs.createWriteStream(filename))
-      .on("close", callback);
-  });
-};
-
-//Node.js Function to save image from External URL.
-function saveImageToDisk(url, localPath) {
-  try {
-    let fullUrl = url;
-    let file = fs.createWriteStream(localPath);
-    let request = https.get(url, function(response) {
-      response.pipe(file);
-    });
-  } catch (error) {
-    logger.debug(`Server/logic ERROR`, error);
-  }
-}
- */

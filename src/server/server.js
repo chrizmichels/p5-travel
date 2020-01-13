@@ -9,6 +9,7 @@ const fetch = require("node-fetch");
 const axios = require("axios");
 const { parse, stringify } = require("flatted/cjs");
 const download2 = require("image-downloader");
+const gTimeToTrip = "";
 
 //Setup Logging
 const getLogger = require("webpack-log");
@@ -102,6 +103,16 @@ app.listen(port, function() {
   logger.debug(`Server/index.js -> Example app listening on port ${port}!`);
 });
 
+// Callback function to complete GET '/all'
+app.get("/getDaysToTrip", (req, res) => {
+  try {
+    logger.debug("Server/getDaysToTrip Endpoint -> Get request: ", req);
+    res.send(gTimeToTrip);
+  } catch (error) {
+    logger.debug(`ERROR Server/getDaysToTrip Endpoint -> Get reques`);
+  }
+});
+
 // Post Route
 app.post("/getLocation", async (req, res) => {
   data = [];
@@ -116,22 +127,30 @@ app.post("/getLocation", async (req, res) => {
       locationToFind
     );
 
-    
     const continents = await geonames.search({ q: locationToFind });
-    /*    logger.debug(
+    logger.debug(
       "/getLocation Endpoint -> Server side POST - Geonames RESPONSE:",
       continents
-    ); */
-
-    let cleanData = await Logic.cleanCountries(
-      date,
-      locationToFind,
-      continents
     );
-    logger.debug("/getLocation Endpoint -> Cleaned Location:", cleanData);
-    res.json({
-      cleanData
-    });
+
+    //Check if continents are not empty
+    if (continents.totalResultsCount > 0) {
+      let cleanData = await Logic.cleanCountries(
+        date,
+        locationToFind,
+        continents
+      );
+      logger.debug("/getLocation Endpoint -> Cleaned Location:", cleanData);
+      res.json({
+        cleanData
+      });
+    } else {
+      // alert(`Location ${locationToFind} not Found, please try again$`);
+      res.json(continents);
+      logger.debug(
+        `/getLocation Endpoint -> Location ${locationToFind} not found`
+      );
+    }
   } catch (error) {
     logger.debug("/getLocation Endpoint -> ERROR in SERVER SIDE POST", error);
   }
@@ -148,11 +167,9 @@ app.post("/getForecast", async (req, res) => {
     drkSkyLon = data[0].cleanData.lng;
     let date = `${data[0].cleanData.date}`; // 00:00:00 GMT`;
     let unixTime = Logic.toTimestamp(date);
-    logger.debug("getForecast Endpoint -> unixTime: ", unixTime);
+    logger.debug("getForecast Endpoint -> unixTime: ", unixTime.unixTime);
 
-    //unixTime = Date.parse(date);
-
-    let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon},${unixTime}?lang=de&units=si#`;
+    let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon},${unixTime.unixTime}?lang=de&units=si#`;
 
     logger.debug(
       "getForecast Endpoint -> Server side POST - fetch url: ",
@@ -162,14 +179,11 @@ app.post("/getForecast", async (req, res) => {
     fetch(drkSkyURL)
       .then(res => res.json())
       .then(json => res.json(json));
-
-    /*     await axios.get(drkSkyURL).then(response => {
-      logger.debug("getForecast Endpoint -> POST received with: ", response);
-
-      res.json(stringify(response)); 
-    });*/
   } catch (error) {
-    logger.debug("getForecast Endpoint -> ERROR in SERVER SIDE POST", error);
+    logger.debug(
+      "Server/getForecast Endpoint -> ERROR in SERVER SIDE POST",
+      error
+    );
   }
 });
 
@@ -191,12 +205,6 @@ app.post("/getPictures", async (req, res) => {
       "getPictures Endpoint -> Server side POST - fetch url: ",
       pxbayURL
     );
-    /* 
-    await axios.get(pxbayURL).then(response => {
-      logger.debug("getPictures Endpoint -> POST received with: ", response);
-
-      res.json(stringify(response));
-    }); */
 
     fetch(pxbayURL)
       .then(res => res.json())
@@ -209,7 +217,7 @@ app.post("/getPictures", async (req, res) => {
   }
 });
 
-//Get Pictures
+//Clean Data and return JSON Object
 app.post("/getCleanData", async (req, res) => {
   let data;
   data = req.body;
@@ -221,6 +229,8 @@ app.post("/getCleanData", async (req, res) => {
       "getCleanData Endpoint -> Data returned from Cleaning: ",
       cleanData
     );
+
+    // cleanData.DaysToTrip = gTimeToTrip;
 
     res.json(cleanData);
   } catch (error) {

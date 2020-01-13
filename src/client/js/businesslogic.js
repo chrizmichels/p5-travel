@@ -20,6 +20,15 @@ function isUrlValid(userInput) {
   else return true;
 }
 
+//Validate Date
+function isDateValid(userInput) {
+  var res = userInput.match(
+    /^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/g
+  );
+  if (res == null) return false;
+  else return true;
+}
+
 function plg(data) {
   return {
     polarity: "resp.polarity",
@@ -40,6 +49,8 @@ const getLocationCoordinates = async event => {
     //Get URL from UI
     let location = document.getElementById("name").value;
     let date = document.getElementById("date").value;
+
+    // IF DAte is Valid
 
     //If travel date is within a week -> Get Current Weather forecast
     //ELSE -> Get predicted forecast
@@ -66,49 +77,48 @@ const getLocationCoordinates = async event => {
       data
     );
 
-    const forecast = await postData("/getForecast", data);
+    if (data.totalResultsCount === 0) {
+      alert(`Location ${location} not found. Please try again`);
+    } else {
+      const forecast = await postData("/getForecast", data);
 
-    /*     log.debug(
-      "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
-      forecast
-    ); */
+      log.debug(
+        "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
+        forecast
+      );
 
-    const pictures = await postData("/getPictures", data);
-    /* 
-    log.debug(
-      "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
-      pictures
-    ); */
+      const pictures = await postData("/getPictures", data);
 
-    let dataToClean = [];
-    dataToClean.push(data);
-    dataToClean.push(forecast);
-    dataToClean.push(pictures);
+      log.debug(
+        "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
+        pictures
+      );
 
-    log.debug(
-      "Client/busineslogic.js/getLocationCoordinates-> Data Object:",
-      dataToClean
-    );
+      let dataToClean = [];
+      dataToClean.push(data);
+      dataToClean.push(forecast);
+      dataToClean.push(pictures);
 
-    log.debug(
-      "Client/busineslogic.js/getCleanData-> Data to Clean:",
-      dataToClean
-    );
+      log.debug(
+        "Client/busineslogic.js/getCleanData-> Data to Clean:",
+        dataToClean
+      );
 
-    const cleanData = await postData("/getCleanData", dataToClean);
+      const cleanData = await postData("/getCleanData", dataToClean);
 
-    log.debug(
-      "Client/busineslogic.js/getCleanData-> Data returned from postDAta Call:",
-      cleanData
-    );
+      log.debug(
+        "Client/busineslogic.js/getCleanData-> Data returned with CLEAN DATA:",
+        cleanData
+      );
 
-    const copyData = await postData("/copyImgFiles", cleanData);
+      /*     const copyData = await postData("/copyImgFiles", cleanData);
     log.debug(
       "Client/busineslogic.js/copyImgData-> Data returned from postDAta Call:",
       copyData
-    );
+    ); */
 
-    await updateUILocation(cleanData);
+      await updateUILocation(cleanData);
+    }
   } catch (error) {
     log.debug(
       "Client/busineslogic.js/getLocationCoordinates -> ERROR in Client Side - getStarted",
@@ -190,6 +200,14 @@ const updateUILocation = async data => {
     document.getElementById(
       "imagetags"
     ).innerHTML = `Image Tags: ${data.ImageTags}`;
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.DaysToTrip
+    );
+    document.getElementById(
+      "daystoTrip"
+    ).innerHTML = `Days to Trip: ${data.DaysToTrip}`;
     //
 
     log.debug(
