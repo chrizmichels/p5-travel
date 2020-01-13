@@ -1,9 +1,4 @@
 import ulog from "ulog";
-//import { isUrlValid, updateUI } from "./busineslogic";
-
-/* Global Variables */
-let data = [];
-let projectData = {};
 
 //Setup Client Side Logging
 const log = ulog("servercalls.js");
@@ -41,8 +36,4 @@ const postData = async (url = "", data = {}) => {
   }
 };
 
-// export { getStarted, postData, updateUI };
-// export { getStarted };
-
-// export { isUrlValid, getStarted };
 export { postData };

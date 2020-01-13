@@ -19,6 +19,9 @@ module.exports = {
     // no matter the current URL
     publicPath: "./src/client/media/" */
   },
+  node: {
+    fs: "empty"
+  },
   mode: "development",
   devtool: "source-map",
   devServer: {
@@ -63,6 +66,7 @@ module.exports = {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
+              publicPath: "dist/media/",
               outputPath: "media/",
               esModule: false
             }

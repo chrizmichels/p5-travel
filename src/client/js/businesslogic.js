@@ -1,15 +1,21 @@
 import ulog from "ulog";
 import { postData } from "./servercalls";
-
+/* 
+const dotenv = require("dotenv");
+dotenv.config(); */
+/* import { dotenv } from "dotenv";
+dotenv.config();
+ */
 /* Global Variables */
-let data = [];
 let projectData = {};
+
+import L from "leaflet";
+//Init Map
+let mymap = L.map("mapid");
 
 //Setup Client Side Logging
 const log = ulog("busineslogic.js");
 log.level = log.DEBUG;
-
-let gData, gForecast, gPictures, gCleanData, gCopyData;
 
 //Validate URL
 function isUrlValid(userInput) {
@@ -29,17 +35,8 @@ function isDateValid(userInput) {
   else return true;
 }
 
-function plg(data) {
-  return {
-    polarity: "resp.polarity",
-    confidence: "resp.polarity_confidence",
-    text: "resp.text",
-    url: "analyseURL"
-  };
-}
-
 /* Function called by event listener */
-const getLocationCoordinates = async event => {
+const getLocationInformation = async event => {
   try {
     event.preventDefault();
 
@@ -50,74 +47,103 @@ const getLocationCoordinates = async event => {
     let location = document.getElementById("name").value;
     let date = document.getElementById("date").value;
 
+    log.debug(`MAP`, mymap);
+    const MapBoxAPIKey =
+      "pk.eyJ1IjoiY2hyaXptaWNoZWxzIiwiYSI6ImNrNWN4Z3lqbzF2Z2EzbXBnbXBicnd0aHUifQ.NmMvjb2FN_RWS1vEV4BYgg";
+    // process.env.MAPBOX_API_KEY;
+    mymap.setView([50.5, 30.5], 13);
+    var marker = L.marker([50.5, 30.5]).addTo(mymap);
+
+    L.tileLayer(
+      "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${accessToken}",
+      {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: "mapbox/streets-v11",
+        accessToken: MapBoxAPIKey
+      }
+    ).addTo(mymap);
+
+    marker.bindPopup("<b>Let's go here!</b>").openPopup();
+
     // IF DAte is Valid
+    if (location != "" && isDateValid(date)) {
+      //If travel date is within a week -> Get Current Weather forecast
+      //ELSE -> Get predicted forecast
 
-    //If travel date is within a week -> Get Current Weather forecast
-    //ELSE -> Get predicted forecast
+      log.debug(
+        "Client/busineslogic.js/getLocationCoordinates -> Get URL from UI: ",
+        location
+      );
 
-    log.debug(
-      "Client/busineslogic.js/getLocationCoordinates -> Get URL from UI: ",
-      location
-    );
+      projectData = {};
+      projectData = {
+        location: location,
+        date: date
+      };
+      log.debug(
+        "Client/busineslogic.js/getLocationCoordinates -> Call postData",
+        projectData
+      );
 
-    projectData = {};
-    projectData = {
-      location: location,
-      date: date
-    };
-    log.debug(
-      "Client/busineslogic.js/getLocationCoordinates -> Call postData",
-      projectData
-    );
+      const data = await postData("/getLocation", projectData);
 
-    const data = await postData("/getLocation", projectData);
+      log.debug(
+        "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
+        data
+      );
 
-    log.debug(
-      "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
-      data
-    );
+      if (data.totalResultsCount === 0) {
+        alert(`Location ${location} not found. Please try again`);
+      } else {
+        const forecast = await postData("/getForecast", data);
 
-    if (data.totalResultsCount === 0) {
-      alert(`Location ${location} not found. Please try again`);
+        log.debug(
+          "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
+          forecast
+        );
+
+        const pictures = await postData("/getPictures", data);
+
+        log.debug(
+          "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
+          pictures
+        );
+
+        let dataToClean = [];
+        dataToClean.push(data);
+        dataToClean.push(forecast);
+        dataToClean.push(pictures);
+
+        log.debug(
+          "Client/busineslogic.js/getCleanData-> Data to Clean:",
+          dataToClean
+        );
+
+        const cleanData = await postData("/getCleanData", dataToClean);
+
+        log.debug(
+          "Client/busineslogic.js/getCleanData-> Data returned with CLEAN DATA:",
+          cleanData
+        );
+
+        await updateUILocation(cleanData);
+      }
     } else {
-      const forecast = await postData("/getForecast", data);
-
-      log.debug(
-        "Client/busineslogic.js/getForecast-> Data returned from postDAta Call:",
-        forecast
-      );
-
-      const pictures = await postData("/getPictures", data);
-
-      log.debug(
-        "Client/busineslogic.js/getPictures-> Data returned from postDAta Call:",
-        pictures
-      );
-
-      let dataToClean = [];
-      dataToClean.push(data);
-      dataToClean.push(forecast);
-      dataToClean.push(pictures);
-
-      log.debug(
-        "Client/busineslogic.js/getCleanData-> Data to Clean:",
-        dataToClean
-      );
-
-      const cleanData = await postData("/getCleanData", dataToClean);
-
-      log.debug(
-        "Client/busineslogic.js/getCleanData-> Data returned with CLEAN DATA:",
-        cleanData
-      );
-
-      /*     const copyData = await postData("/copyImgFiles", cleanData);
-    log.debug(
-      "Client/busineslogic.js/copyImgData-> Data returned from postDAta Call:",
-      copyData
-    ); */
-
-      await updateUILocation(cleanData);
+      if (location === "") {
+        if (isDateValid(date)) {
+          alert(`Check Location (${location}), Date (${date}) is fine!`);
+        } else {
+          alert(
+            `Check Location (${location}) and Date (${date}), bothe have problems!`
+          );
+        }
+      } else {
+        if (!isDateValid(date)) {
+          alert(`Check Date (${date}), Location (${location}) is fine!`);
+        }
+      }
     }
   } catch (error) {
     log.debug(
@@ -127,6 +153,7 @@ const getLocationCoordinates = async event => {
   }
 };
 
+//Update UI with all data
 const updateUILocation = async data => {
   try {
     log.debug(
@@ -227,76 +254,4 @@ const updateUILocation = async data => {
   }
 };
 
-const getStarted = async event => {
-  try {
-    event.preventDefault();
-
-    log.debug(
-      "Client/busineslogic.js/getStarted -> ::::: Get Results Clicked :::::"
-    );
-    //Get URL from UI
-    let url = document.getElementById("name").value;
-
-    log.debug("Client/busineslogic.js/getStarted -> Get URL from UI: ", url);
-
-    if (isUrlValid(url)) {
-      //data.push(url);
-      // console.log(url);
-      projectData = {};
-      projectData = { url: url };
-      log.debug(
-        "Client/busineslogic.js/getStarted -> Call postData",
-        projectData
-      );
-
-      //Send URL to /getSentiment Server enpoint
-      //Return will be an json Object
-      const data = await postData("/getSentiment", projectData);
-
-      /* 
-      log.debug(
-        "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
-        data2
-      ); 
- */
-      //Update UI with result from server response
-      updateUI(data);
-    } else {
-      alert("Please enter a valid URL");
-    }
-  } catch (err) {
-    log.debug(
-      "Client/busineslogic.js/getStarted -> ERROR in Client Side - getStarted",
-      error
-    );
-  }
-};
-
-//Update UI
-const updateUI = async data => {
-  try {
-    log.debug(
-      `Client/busineslogic.js/updateUI ->  Update UI with data Object`,
-      data
-    );
-
-    /*   const request = await fetch("/getSentiment");
-      const allData = await request.json(); */
-    const allData = data;
-
-    log.debug("Client/busineslogic.js/updateUI -> Data: ", allData);
-    document.getElementById("url").innerHTML = `URL: ${allData.url}`;
-    document.getElementById("pol").innerHTML = `Polarity: ${allData.polarity}`;
-    document.getElementById(
-      "conf"
-    ).innerHTML = `Confidence: ${allData.confidence}`;
-    document.getElementById("restxt").innerHTML = `TEXT: ${allData.text}`;
-  } catch (error) {
-    log.debug(
-      "Client/busineslogic.js/updateUI -> ERROR in Client Side updateUI",
-      error
-    );
-  }
-};
-
-export { isUrlValid, updateUI, getStarted, plg, getLocationCoordinates };
+export { isUrlValid, getLocationInformation };

@@ -3,16 +3,10 @@ const getLogger = require("webpack-log");
 const logger = getLogger({ name: "logic-yoda", timestamp: true });
 const download2 = require("image-downloader");
 const fs = require("fs");
-/*const https = require("https");
-const request = require("request"); */
-const gdaysToTrip = "";
 
 //Switch Log Level
 // logger.level = "silent";
 logger.level = "debug";
-
-//Return Data Object
-let cleanData = {};
 
 module.exports.cleanCountries = async (date, match, data = {}) => {
   try {

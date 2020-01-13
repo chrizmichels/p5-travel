@@ -31,6 +31,7 @@
     "flatted": "^2.0.1",
     "geonames.js": "^2.3.0",
     "image-downloader": "^3.5.0",
+    "leaflet": "^1.6.0",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0",
     "ulog": "^1.1.0",
