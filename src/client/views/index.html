@@ -25,15 +25,9 @@
   </head>
 
     <body>
-
+        <div class="container">
 
         <header>
-<!--             <div class="">
-                Logo
-            </div>
-            <div class="">
-                //navigation//
-            </div> -->
             <h1 id="title">Travel the World</h1>
             <ul id="navbar">
               <li><a href="#">Home</a></li>
@@ -41,18 +35,24 @@
             </ul>
         </header>
 
-        <main>
-            <section>
-                <form class="" onsubmit="Client.getStarted(event)" >
+        <!-- <main> -->
+            <div class="search">
+                <form  onsubmit="Client.getStarted(event)" >
                     <input id="name" type="text" name="input" value=""  placeholder="Location Name">
                     <input id="date" type="text" name="input" value=""  placeholder="dd.mm.yyyy">
 
                     <!-- <input id="generate" type="submit" onclick="Client.getStarted(event)" onsubmit="Client.getStarted(event)"> -->
                 <button id="generate">Get Results</button>
                 </form>
-            <section>
+                <div class="map">
+                    <div id="mapid"></div>
+                </div>
+                <div class= "card">Search 1</div>    
 
-            <section>
+                
+            </div>
+
+            <div class="results">
                 <strong>Form Results:</strong>
                 <div id="location"></div>
                 <div id="country"></div>
@@ -66,11 +66,10 @@
                 <div id="imagetags"></div>
                 <div id="daystoTrip"></div>
                 <div id="image" ></div>
-                <div id="mapid"></div>
           
 
-            </section>
-        </main>
+            </div>
+        <!-- </main> -->
 
         <footer>
             <div class="footer-right">
@@ -85,9 +84,10 @@
                   <a class="fla flh" href="#">About</a>
                   <a class="fla flh" href="#">Contact</a>
                 </p>
-                <p>CFRCR Inc. &copy; 2019</p>
+                <p>TRVLTWRLD Inc. &copy; 2020</p>
               </div>
         </footer>
+    <//div>
 <!--         <script>
             // Check that service workers are supported
            if ('serviceWorker' in navigator) {

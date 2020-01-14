@@ -10,11 +10,18 @@
 
 header {
   grid-area: hd;
+  // grid-area: 1 / 1 / 3 / 9;
   display: flex;
   padding: 20px;
-  color: #444;
-  /* border: 2px solid lightseagreen; */
-  background-color: pink;
+  height: 150px;
+  color: pink;
+  border: 2px solid lightseagreen;
+  background-color: #444;
+  background-image: linear-gradient(
+      rgba(68, 68, 68, 0.8),
+      rgba(68, 68, 68, 0.8)
+    ),
+    url("../media/back.jpg");
   font-size: xx-large;
   /* font-family: "Indie Flower", cursive; */
 }
@@ -33,7 +40,7 @@ li a {
   text-decoration: none;
   padding: 10px;
   size: 30px;
-  color: #444;
+  color: pink;
   text-emphasis: emphasis;
   font-family: "Amatic SC", cursive;
 }

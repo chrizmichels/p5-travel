@@ -1,23 +1,102 @@
 @import url("https://fonts.googleapis.com/css?family=Inconsolata&display=swap");
 
+.container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  // grid-auto-rows: auto;
+  grid-auto-rows: repeat(4, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  border: 2px solid red;
+  // flex: 2;
+  grid-template-areas:
+    "hd hd hd hd hd hd"
+    "src src src src src src"
+    "mn mn mn mn mn mn"
+    "ft ft ft ft ft ft";
+  /* border: 2px solid pink; */
+  font-size: large;
+  font-family: "Inconsolata", monospace;
+  /* align-content: center; */
+}
+
+@media (min-width: 600px) {
+  .container {
+    grid-template-areas:
+      "hd hd hd hd hd hd"
+      "mn mn mn mn src src"
+      "mn mn mn mn src src"
+      "ft ft ft ft ft ft";
+    font-size: medium;
+  }
+}
+
+body {
+  background-color: #444;
+  color: #fffff8;
+}
+
+.search {
+  grid-area: src;
+  justify-self: center;
+  border: 2px solid blue;
+  // grid-area: 3 / 7 / 8 / 9;
+}
+
+.map {
+  grid-area: src;
+  justify-self: end;
+  border: 2px solid lightgreen;
+}
+
+.results {
+  grid-area: mn;
+  // justify-self: center;
+  border: 2px solid green;
+  // grid-area: 3 / 1 / 8 / 7;
+}
+
+/* Avantar */
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.8);
+  transition: 0.3s;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+#mapid {
+  grid-area: src;
+  // justify-self: center;
+  border: 2px solid brown;
+  padding: 10px;
+  height: 180px;
+  width: 250px;
+}
+
+button {
+  width: 200px;
+  border: none;
+  font-size: large;
+  color: antiquewhite;
+  background-color: aquamarine;
+  align-items: flex-end;
+  color: black;
+}
+
+//////////////////////
+// Start fro mscratch above
+/////////////////////
 /* body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
  */
-
-body {
-  background-color: #444;
-  color: #fffff8;
-
-  background-image: linear-gradient(
-      rgba(68, 68, 68, 0.8),
-      rgba(68, 68, 68, 0.8)
-    ),
-    url("../media/back.jpg");
-  background-position: center;
-}
+/* 
 main {
   flex: 2;
 }
@@ -25,9 +104,69 @@ main {
 section {
   max-width: 800px;
   margin: 50px auto;
+  border: 2px solid lightyellow;
+}
+
+.search {
+  grid-area: search;
+  border: 2px solid blue;
+}
+
+.results {
+  grid-area: main;
+  border: 2px solid green;
 }
 
 #mapid {
+  grid-area: search;
+  border: 2px solid brown;
+  padding: 10px;
   height: 180px;
   width: 250px;
 }
+
+//////// New Stuff below ////
+
+body {
+  background-color: #444;
+  color: #fffff8;
+
+  /*   background-image: linear-gradient(
+      rgba(68, 68, 68, 0.8),
+      rgba(68, 68, 68, 0.8)
+    ),
+    url("../media/back.jpg");
+  background-position: center; 
+}
+
+/* General GRID Configuration 
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fl);
+  grid-auto-rows: minmax(10px, auto);
+  padding: 10px;
+  gap: 20px;
+  border: 2px solid red;
+  flex: 2;
+  grid-template-areas:
+    "hd"
+    "search"
+    "main"
+    "ft";
+  /* border: 2px solid pink; 
+  font-size: large;
+  font-family: "Inconsolata", monospace;
+  /* align-content: center; 
+}
+
+@media (min-width: 900px) {
+  .container {
+    grid-template-areas:
+      "hd hd hd hd hd hd"
+      "main main main main search search"
+      "ft ft ft ft ft ft";
+    font-size: medium;
+  }
+}
+ */
