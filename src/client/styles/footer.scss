@@ -1,5 +1,119 @@
-footer {
+/* footer {
     background: #252525;
     color: #e7e7e7;
     height: 70px;
+}
+ */
+
+/* All Footer Styling */
+/* @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap"); */
+@import url("https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap");
+/*  Footer design inspired by https://codepen.io/slstudios/pen/mJqjeP */
+
+* {
+  /* font-family: Roboto; */
+  font-family: "Josefin Sans", sans-serif;
+  /* font-family: "Amatic SC", cursive; */
+}
+footer {
+  grid-area: ft;
+  width: 100%;
+  display: inline-block;
+  background: #ccc;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  text-decoration: underline;
+  border: 2px transparent;
+  border-top-style: solid;
+  border-top-color: pink;
+  border-top-width: thick;
+  /* border: 2px solid lightseagreen; */
+  background-color: #292c2f;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  width: 100%;
+  text-align: left;
+  font: normal 16px sans-serif;
+  /* font-family: "Amatic SC", cursive; */
+  padding: 45px 50px;
+}
+
+.footer-left {
+  color: #8f9296;
+  font-size: 14px;
+  margin: 0;
+}
+
+.footer-links {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  margin: 0 0 10px;
+  padding: 0;
+  transition: ease 0.25s;
+}
+
+.fla {
+  display: inline-block;
+  line-height: 1.8;
+  text-decoration: none;
+  color: inherit;
+  transition: ease 0.25s;
+}
+
+.fla:before {
+  content: "·";
+  font-size: 20px;
+  left: 0;
+  color: #fff;
+  display: inline-block;
+  padding-right: 5px;
+}
+.fla-link-1:before {
+  content: none;
+}
+
+.footer-right {
+  float: right;
+  margin-top: 6px;
+  max-width: 180px;
+}
+.fra {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  background-color: #33383b;
+  border-radius: 2px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+  line-height: 35px;
+  margin-left: 3px;
+  transition: all 0.25s;
+}
+
+.frh:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+}
+
+.flh:hover {
+  text-decoration: underline;
+}
+
+/* Media Queries */
+
+@media (max-width: 600px) {
+  .footer-left,
+  .footer-right {
+    text-align: center;
+  }
+  .footer-right {
+    float: none;
+    margin: 0 auto 20px;
+  }
+  .footer-left .footer-links {
+    line-height: 1.8;
+  }
 }

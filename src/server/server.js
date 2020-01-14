@@ -128,10 +128,10 @@ app.post("/getLocation", async (req, res) => {
     );
 
     const continents = await geonames.search({ q: locationToFind });
-    logger.debug(
+    /*     logger.debug(
       "/getLocation Endpoint -> Server side POST - Geonames RESPONSE:",
       continents
-    );
+    ); */
 
     //Check if continents are not empty
     if (continents.totalResultsCount > 0) {

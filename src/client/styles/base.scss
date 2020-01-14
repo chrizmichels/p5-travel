@@ -1,9 +1,23 @@
-body {
+@import url("https://fonts.googleapis.com/css?family=Inconsolata&display=swap");
+
+/* body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
+ */
 
+body {
+  background-color: #444;
+  color: #fffff8;
+
+  background-image: linear-gradient(
+      rgba(68, 68, 68, 0.8),
+      rgba(68, 68, 68, 0.8)
+    ),
+    url("../media/back.jpg");
+  background-position: center;
+}
 main {
   flex: 2;
 }
@@ -15,4 +29,5 @@ section {
 
 #mapid {
   height: 180px;
+  width: 250px;
 }

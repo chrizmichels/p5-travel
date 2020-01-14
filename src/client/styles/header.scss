@@ -1,8 +1,48 @@
-header {
+/* header {
   display: flex;
   justify-content: space-between;
   padding: 10px 40px;
   background: rgb(197, 3, 171);
   height: 100px;
   color: #e7e7e7;
+}
+ */
+
+header {
+  grid-area: hd;
+  display: flex;
+  padding: 20px;
+  color: #444;
+  /* border: 2px solid lightseagreen; */
+  background-color: pink;
+  font-size: xx-large;
+  /* font-family: "Indie Flower", cursive; */
+}
+
+#navbar {
+  display: flex;
+  align-content: center;
+  justify-content: flex-end;
+  list-style: none;
+  /* border: 2px solid lightgrey; */
+  /* font-family: "Amatic SC", cursive; */
+  /* font-size: x-large; */
+}
+
+li a {
+  text-decoration: none;
+  padding: 10px;
+  size: 30px;
+  color: #444;
+  text-emphasis: emphasis;
+  font-family: "Amatic SC", cursive;
+}
+
+#title {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  list-style: none;
+  font-family: "Amatic SC", cursive;
+  /* border: 2px solid lightcoral; */
 }

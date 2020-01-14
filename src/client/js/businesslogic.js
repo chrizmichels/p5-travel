@@ -11,7 +11,13 @@ let projectData = {};
 
 import L from "leaflet";
 //Init Map
-let mymap = L.map("mapid");
+let mymap = L.map("mapid", {
+  center: new L.LatLng(50.5, 30.5),
+  zoom: 8,
+  minZoom: 5,
+  maxZoom: 13,
+  loadingControl: true
+});
 
 //Setup Client Side Logging
 const log = ulog("busineslogic.js");
@@ -26,7 +32,7 @@ function isUrlValid(userInput) {
   else return true;
 }
 
-//Validate Date
+//Validate Date24, 121)24, 121)24, 121)24, 121)
 function isDateValid(userInput) {
   var res = userInput.match(
     /^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/g
@@ -46,26 +52,6 @@ const getLocationInformation = async event => {
     //Get URL from UI
     let location = document.getElementById("name").value;
     let date = document.getElementById("date").value;
-
-    log.debug(`MAP`, mymap);
-    const MapBoxAPIKey =
-      "pk.eyJ1IjoiY2hyaXptaWNoZWxzIiwiYSI6ImNrNWN4Z3lqbzF2Z2EzbXBnbXBicnd0aHUifQ.NmMvjb2FN_RWS1vEV4BYgg";
-    // process.env.MAPBOX_API_KEY;
-    mymap.setView([50.5, 30.5], 13);
-    var marker = L.marker([50.5, 30.5]).addTo(mymap);
-
-    L.tileLayer(
-      "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${accessToken}",
-      {
-        attribution:
-          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: "mapbox/streets-v11",
-        accessToken: MapBoxAPIKey
-      }
-    ).addTo(mymap);
-
-    marker.bindPopup("<b>Let's go here!</b>").openPopup();
 
     // IF DAte is Valid
     if (location != "" && isDateValid(date)) {
@@ -97,6 +83,58 @@ const getLocationInformation = async event => {
       if (data.totalResultsCount === 0) {
         alert(`Location ${location} not found. Please try again`);
       } else {
+        //Add Location to Map
+        let Lat = data.cleanData.lat;
+        let Lon = data.cleanData.lng;
+
+        log.debug(`MAP`, mymap);
+        const MapBoxAPIKey =
+          "pk.eyJ1IjoiY2hyaXptaWNoZWxzIiwiYSI6ImNrNWN4Z3lqbzF2Z2EzbXBnbXBicnd0aHUifQ.NmMvjb2FN_RWS1vEV4BYgg";
+        // process.env.MAPBOX_API_KEY;
+
+        mymap.setView([Lat, Lon], 13);
+        var marker = L.marker([Lat, Lon]).addTo(mymap);
+
+        /* 
+        "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${accessToken}",
+        {
+          attribution:
+            'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+          maxZoom: 18,
+          id: "mapbox/satellite-v9",
+          z: "1",
+          x: "1",
+          y: "0",
+          accessToken: MapBoxAPIKey
+        }
+     */
+        marker.bindPopup(`<b>Let's go here! ${Lat} ${Lon}</b>`).openPopup();
+
+        L.tileLayer(
+          `https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/1/1/0?access_token=${MapBoxAPIKey}`,
+          {
+            attribution:
+              'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: "mapbox/streets-v11",
+            accessToken: MapBoxAPIKey
+          }
+        ).addTo(mymap);
+
+        log.debug(
+          "Client/busineslogic.js/MAP-> Layer:",
+          L.tileLayer(
+            "https://api.mapbox.com/styles/v1/{id}/tiles/1/1/0?access_token=${accessToken}",
+            {
+              attribution:
+                'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+              maxZoom: 18,
+              id: "mapbox/streets-v11",
+              accessToken: MapBoxAPIKey
+            }
+          )
+        );
+
         const forecast = await postData("/getForecast", data);
 
         log.debug(

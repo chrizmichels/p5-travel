@@ -8,7 +8,9 @@ module.exports = {
   entry: "./src/client/index.js",
   output: {
     libraryTarget: "var",
-    library: "Client"
+    library: "Client",
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js"
     /*   // Create a dir dist in the project root
     path: path.resolve(__dirname, "dist"),
     // filename
@@ -66,12 +68,21 @@ module.exports = {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              publicPath: "dist/media/",
               outputPath: "media/",
               esModule: false
             }
           }
         ]
+      },
+      {
+        test: /\.(html)$/,
+        use: {
+          loader: "html-loader",
+          options: {
+            root: path.resolve(__dirname, "src"),
+            attrs: ["img:src", "link:href"]
+          }
+        }
       }
     ]
   },
