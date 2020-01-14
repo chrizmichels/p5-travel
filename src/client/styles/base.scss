@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Inconsolata&display=swap");
 
+//Import Material Design
+/* @import "@material/typography/mdc-typography";
+@import "@material/button/mdc-button";
+ */
+////
 .container {
   display: grid;
   grid-template-columns: repeat(6, 1fr);

@@ -33,6 +33,7 @@
     "html-loader": "^0.5.5",
     "image-downloader": "^3.5.0",
     "leaflet": "^1.6.0",
+    "material-components-web": "^4.0.0",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0",
     "ulog": "^1.1.0",
