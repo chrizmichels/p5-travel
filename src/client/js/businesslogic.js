@@ -12,12 +12,51 @@ let projectData = {};
 import L from "leaflet";
 //Init Map
 let mymap = L.map("mapid", {
-  center: new L.LatLng(50.5, 30.5),
+  center: new L.LatLng(48.8534, 2.3486),
   zoom: 8,
   minZoom: 5,
   maxZoom: 13,
   loadingControl: true
 });
+
+function drawMap(mymap, Lat, Lon, LocationName) {
+  try {
+    const request = fetch("/getMapBoxAPIKey");
+    let MapBoxAPIKey = request.key;
+
+    // log.debug(`MAP`, mymap);
+    MapBoxAPIKey =
+      "pk.eyJ1IjoiY2hyaXptaWNoZWxzIiwiYSI6ImNrNWN4Z3lqbzF2Z2EzbXBnbXBicnd0aHUifQ.NmMvjb2FN_RWS1vEV4BYgg";
+    // process.env.MAPBOX_API_KEY;
+
+    mymap.setView([Lat, Lon], 13);
+    var marker = L.marker([Lat, Lon]).addTo(mymap);
+
+    L.tileLayer(
+      `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${MapBoxAPIKey}`,
+      {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: "mapbox/streets-v11",
+        accessToken: MapBoxAPIKey
+      }
+    ).addTo(mymap);
+
+    let latLngs = [marker.getLatLng()];
+    let markerBounds = L.latLngBounds(latLngs);
+    mymap.fitBounds(markerBounds);
+
+    marker.bindPopup(`<b>Let's go to ${LocationName}</b>`).openPopup();
+  } catch (error) {
+    log.debug(
+      "Client/busineslogic.js/drawMap -> ERROR in Client Side - getStarted",
+      error
+    );
+  }
+}
+
+drawMap(mymap, 48.8534, 2.3486, "Paris");
 
 //Setup Client Side Logging
 const log = ulog("busineslogic.js");
@@ -87,53 +126,10 @@ const getLocationInformation = async event => {
         let Lat = data.cleanData.lat;
         let Lon = data.cleanData.lng;
 
-        log.debug(`MAP`, mymap);
-        const MapBoxAPIKey =
-          "pk.eyJ1IjoiY2hyaXptaWNoZWxzIiwiYSI6ImNrNWN4Z3lqbzF2Z2EzbXBnbXBicnd0aHUifQ.NmMvjb2FN_RWS1vEV4BYgg";
-        // process.env.MAPBOX_API_KEY;
-
-        mymap.setView([Lat, Lon], 13);
-        var marker = L.marker([Lat, Lon]).addTo(mymap);
-
-        /* 
-        "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${accessToken}",
-        {
-          attribution:
-            'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-          maxZoom: 18,
-          id: "mapbox/satellite-v9",
-          z: "1",
-          x: "1",
-          y: "0",
-          accessToken: MapBoxAPIKey
-        }
-     */
-        marker.bindPopup(`<b>Let's go here! ${Lat} ${Lon}</b>`).openPopup();
-
-        L.tileLayer(
-          `https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/1/1/0?access_token=${MapBoxAPIKey}`,
-          {
-            attribution:
-              'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: "mapbox/streets-v11",
-            accessToken: MapBoxAPIKey
-          }
-        ).addTo(mymap);
-
-        log.debug(
-          "Client/busineslogic.js/MAP-> Layer:",
-          L.tileLayer(
-            "https://api.mapbox.com/styles/v1/{id}/tiles/1/1/0?access_token=${accessToken}",
-            {
-              attribution:
-                'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-              maxZoom: 18,
-              id: "mapbox/streets-v11",
-              accessToken: MapBoxAPIKey
-            }
-          )
-        );
+        //////////////
+        /// CREATE MAP
+        //////////////
+        drawMap(mymap, Lat, Lon, location);
 
         const forecast = await postData("/getForecast", data);
 
@@ -166,7 +162,8 @@ const getLocationInformation = async event => {
           cleanData
         );
 
-        await updateUILocation(cleanData);
+        // await updateUILocation(cleanData);
+        travelCard(cleanData);
       }
     } else {
       if (location === "") {
@@ -186,6 +183,43 @@ const getLocationInformation = async event => {
   } catch (error) {
     log.debug(
       "Client/busineslogic.js/getLocationCoordinates -> ERROR in Client Side - getStarted",
+      error
+    );
+  }
+};
+
+const travelCard = data => {
+  try {
+    let weatherSummary = "";
+
+    if (data.CurrentWthrSummary == undefined) {
+      weatherSummary = `<h2>Your request is to far in the future, there is no weather summary yet. Check Temperature below.</h2>`;
+    } else {
+      weatherSummary = `<h2>Weather Summary: ${data.HourlyWthrSummary} </h2>`;
+    }
+
+    const html = `
+    <div id="trip">
+        <h1> Your travel is ${data.DaysToTrip} days away</h1>
+        <h2>Time to get ready. Here some impressions:</h2>
+        <img  src="${data.ImageUrlTo}" alt="${data.ImageTags}"/>
+        <h2>You are traveling to ${data.Location} in ${data.Country}, expect the following weather: </h2>
+        ${weatherSummary}
+        <h2>Temperature High: ${data.minTemp} celsius</h2>
+        <h2>Temperature Low: ${data.maxTemp} celsius</h2>
+    </div>
+    `;
+
+    //
+    log.debug(
+      "Client/busineslogic.js/const updateUILocation -> set ",
+      data.Country
+    );
+    document.getElementById("card").innerHTML = html;
+    //
+  } catch {
+    log.debug(
+      "Client/busineslogic.js/travelCard -> ERROR in Client Side - getStarted",
       error
     );
   }

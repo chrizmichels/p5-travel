@@ -37,9 +37,10 @@
 
         <!-- <main> -->
             <div class="search">
-                <form  onsubmit="Client.getStarted(event)" >
-                    <input id="name" type="text" name="input" value=""  placeholder="Location Name">
-                    <input id="date" type="text" name="input" value=""  placeholder="dd.mm.yyyy">
+                <form> 
+
+                    <input id="name" type="text" name="input" value="Where"  placeholder="Location Name">
+                    <input id="date" type="text" name="input" value="When"  placeholder="dd.mm.yyyy">
 
                     <!-- <input id="generate" type="submit" onclick="Client.getStarted(event)" onsubmit="Client.getStarted(event)"> -->
                 <button id="generate">Get Results</button>
@@ -47,13 +48,17 @@
                 <div class="map">
                     <div id="mapid"></div>
                 </div>
-                <div class= "card">Search 1</div>    
+                <div>
+
+                    <div id="daystoTrip"></div>
+
+                </div>
+                  
 
                 
             </div>
 
             <div class="results">
-                <strong>Form Results:</strong>
                 <div id="location"></div>
                 <div id="country"></div>
                 <div id="lat"></div>
@@ -64,9 +69,13 @@
                 <div id="minTemp"></div>
                 <div id="maxTemp"></div>
                 <div id="imagetags"></div>
-                <div id="daystoTrip"></div>
-                <div id="image" ></div>
+
+                <div id="image"></div>
           
+                <div id="card" class="card">
+                    <img width="100%" height="auto" src="../media/onload.jpg" alt="holidays, stuff, packing"/>
+
+                </div>
 
             </div>
         <!-- </main> -->

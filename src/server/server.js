@@ -113,6 +113,16 @@ app.get("/getDaysToTrip", (req, res) => {
   }
 });
 
+app.get("/getMapBoxAPIKey", (req, res) => {
+  try {
+    logger.debug("Server/getMapBoxAPIKey Endpoint -> Get request: ", req);
+
+    res.send({ key: process.env.API_KEY });
+  } catch (error) {
+    logger.debug(`ERROR Server/getDaysToTrip Endpoint -> Get reques`);
+  }
+});
+
 // Post Route
 app.post("/getLocation", async (req, res) => {
   data = [];
@@ -197,10 +207,14 @@ app.post("/getPictures", async (req, res) => {
     pxbaySearch = `${encodeURIComponent(
       data[0].cleanData.name
     )}+${encodeURIComponent(data[0].cleanData.country)}`;
+
+    let pxbaySearchCountry = `${encodeURIComponent(data[0].cleanData.country)}`;
+
     logger.debug("getPictures Endpoint -> Server side POST - req body: ", data);
 
     let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo&lang=de&category=buildings`;
 
+    let pxbayURLCountry = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearchCountry}&image_type=photo&lang=de&category=buildings`;
     logger.debug(
       "getPictures Endpoint -> Server side POST - fetch url: ",
       pxbayURL
@@ -209,8 +223,16 @@ app.post("/getPictures", async (req, res) => {
     fetch(pxbayURL)
       .then(res => res.json())
       .then(json => {
-        // logger.debug("getPictures Endpoint -> POST received with: ", json);
-        res.json(json);
+        logger.debug("getPictures Endpoint -> POST received with: ", json);
+        if (json.total === 0) {
+          fetch(pxbayURLCountry)
+            .then(res => res.json())
+            .then(json => {
+              res.json(json);
+            });
+        } else {
+          res.json(json);
+        }
       });
   } catch (error) {
     logger.debug("getPictures Endpoint -> ERROR in SERVER SIDE POST", error);
@@ -229,8 +251,6 @@ app.post("/getCleanData", async (req, res) => {
       "getCleanData Endpoint -> Data returned from Cleaning: ",
       cleanData
     );
-
-    // cleanData.DaysToTrip = gTimeToTrip;
 
     res.json(cleanData);
   } catch (error) {
