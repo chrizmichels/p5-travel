@@ -1,7 +1,6 @@
 # About
 
-This Repo is part of a excercise for the Frontend Developer Udacity Nanodegree. It implements NPL capabilities of the News Inteligence Platform Aylien('https://aylien.com/').
-Paste a URL into the form an hit submit. Aylien will analyse the sentiment of the page and return a score.
+This Repo is part of a excercise for the Frontend Developer Udacity Nanodegree. It implements a Travel App which gives you a weather forecast from [DarkSky API](https://darksky.net/). Enter Location name and Date and you will get back the weather forecast and a nice picture. Give it a shot.
 
 ## Getting started
 
@@ -11,11 +10,18 @@ Paste a URL into the form an hit submit. Aylien will analyse the sentiment of th
 
 2. `npm install`
 
-To get access to Alyen, you need to get your ur own API Keys and install te API:
+To make all this work, you need to get your own API Keys.
 
-3. Signup for an API key
+3. Signup for an API keys
 
-Go to [here](https://developer.aylien.com/signup). Signing up will get yu an API key. Don't worry the API is free to use up to 1000 requests per day or 333 intensive requests. It is free to check how many requests you have remaining for the day.
+Get your Keys form the following services:
+
+- [Geonames](https://www.geonames.org/) to get LAT/LON coordinates for your location
+- [Dark Sky](https://darksky.net/) to get the Weather forecast (eats LAT/LON)
+- [Pixbay] https://pixabay.com/ to get some nice pictures
+- [MapBox](https://account.mapbox.com/auth/signin/?route-to=%22/access-tokens/%22) to get some Geo Dato for [Leaflet](https://leafletjs.com/) Mapping container
+
+Signing up will get yu an API key. Don't worry the API is free to use up to 1000 requests per day or 333 intensive requests. It is free to check how many requests you have remaining for the day.
 
 4. Hide your Key using a .env file
 
@@ -25,8 +31,19 @@ Go to [here](https://developer.aylien.com/signup). Signing up will get yu an API
 - [ ] Fill the .env file with your API keys like this:
 
 ```
-API_ID=**************************
-API_KEY=**************************
+GEO_USER=**************************
+SKY_API_KEY=**************************
+PIXBAY_API_KEY=**************************
+MAPBOX_API_KEY=**************************
 ```
 
-5. have fun :octopus:
+5. Logging
+   To get a better trace for debugging I am using a logger you can swith on/off.
+   Client Side:
+   Log on -> `log.level = log.DEBUG;`
+   Log off -> `log.level = log.NONE;`
+   Server Side
+   Log on -> `logger.level = "silent";`
+   Log off -> `logger.level = "debug";`
+
+6) have fun :octopus:

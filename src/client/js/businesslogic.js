@@ -1,21 +1,18 @@
 import ulog from "ulog";
 import { postData } from "./servercalls";
-/* 
-const dotenv = require("dotenv");
-dotenv.config(); */
-/* import { dotenv } from "dotenv";
-dotenv.config();
- */
+
 /* Global Variables */
 let projectData = {};
 
 //Setup LOgging
 //Setup Client Side Logging
+
 const log = ulog("busineslogic.js");
 log.level = log.DEBUG;
+// log.level = log.NONE;
 
-import L from "leaflet";
 //Init Map
+import L from "leaflet";
 let mymap = L.map("mapid", {
   // center: new L.LatLng(48.8534, 2.3486),
   zoom: 8,
@@ -128,9 +125,8 @@ const getLocationInformation = async event => {
         let Lat = data.cleanData.lat;
         let Lon = data.cleanData.lng;
 
-        //////////////
         /// CREATE MAP
-        //////////////
+
         drawMap(mymap, Lat, Lon, location);
 
         const forecast = await postData("/getForecast", data);
@@ -222,107 +218,6 @@ const travelCard = data => {
   } catch {
     log.debug(
       "Client/busineslogic.js/travelCard -> ERROR in Client Side - getStarted",
-      error
-    );
-  }
-};
-
-//Update UI with all data
-const updateUILocation = async data => {
-  try {
-    log.debug(
-      `Client/busineslogic.js/updateUI ->  Update UI with data Object`,
-      data
-    );
-
-    log.debug("Client/busineslogic.js/const updateUILocation", data);
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Location
-    );
-    document.getElementById("location").innerHTML = `City: ${data.Location}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Country
-    );
-    document.getElementById("country").innerHTML = `Country: ${data.Country}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Latitude
-    );
-    document.getElementById("lat").innerHTML = `Latitude: ${data.Latitude}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Longitude
-    );
-    document.getElementById("lng").innerHTML = `Longitude: ${data.Longitude}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Date
-    );
-    document.getElementById("date").innerHTML = `Longitude: ${data.Date}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.CurrentWthrSummary
-    );
-    document.getElementById(
-      "currentwthrsummary"
-    ).innerHTML = `Current Weather: ${data.CurrentWthrSummary}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.HourlyWthrSummary
-    );
-    document.getElementById(
-      "hourlywthrsummary"
-    ).innerHTML = `Hourly Forecast: ${data.HourlyWthrSummary}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.minTemp
-    );
-    document.getElementById("minTemp").innerHTML = `Min Temp: ${data.minTemp}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.maxTemp
-    );
-    document.getElementById("maxTemp").innerHTML = `Max Temp: ${data.maxTemp}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.ImageTags
-    );
-    document.getElementById(
-      "imagetags"
-    ).innerHTML = `Image Tags: ${data.ImageTags}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.DaysToTrip
-    );
-    document.getElementById(
-      "daystoTrip"
-    ).innerHTML = `Days to Trip: ${data.DaysToTrip}`;
-    //
-
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.ImageUrl
-    );
-
-    document.getElementById(
-      "image"
-    ).innerHTML = ` <img width="100%" height="auto" src="${data.ImageUrlTo}" alt="${data.ImageTags}"
-  />`;
-  } catch (error) {
-    log.debug(
-      "Client/busineslogic.js/updateUILocation -> ERROR in Client Side updateUILocation",
       error
     );
   }

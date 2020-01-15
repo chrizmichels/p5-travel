@@ -4,9 +4,9 @@ import ulog from "ulog";
 import { getLocationInformation } from "./businesslogic";
 
 //Setup Client Side Logging
+// log.level = log.NONE;
 const log = ulog("app.js");
 log.level = log.DEBUG;
-// log.level = log.NONE;
 
 //Setup event Listener
 // Event listener to add function to existing HTML DOM element

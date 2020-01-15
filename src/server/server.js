@@ -33,13 +33,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 const aylien = require("aylien_textapi");
 
-// set aylien API credentias
-let aylienResult = {};
-var textapi = new aylien({
-  application_id: process.env.API_ID,
-  application_key: process.env.API_KEY
-});
-
 /* Setup Dark Sky API */
 const drkSkyAPIKey = process.env.SKY_API_KEY;
 logger.debug(`Server/index.js -> Your Dark Sky API key is ${drkSkyAPIKey}`);
@@ -275,46 +268,5 @@ app.post("/copyImgFiles", async (req, res) => {
     res.json(response);
   } catch (error) {
     logger.debug("getCleanData Endpoint -> ERROR in SERVER SIDE POST", error);
-  }
-});
-
-app.post("/getSentiment", async (req, res) => {
-  data = [];
-  data.push(req.body);
-  logger.debug("/getSentiment Endpoint -> POST received with: ", data);
-
-  try {
-    let analyseURL = data[0].url;
-
-    logger.debug(
-      "/getSentiment Endpoint -> Server side POST - Call getSentiment with:",
-      analyseURL
-    );
-
-    textapi.sentiment(
-      {
-        url: analyseURL
-      },
-      function(error, resp) {
-        if (error === null) {
-          // console.log(resp);
-          logger.debug("/getSentiment Endpoint -> Aylien Response: ", resp);
-          res.json({
-            polarity: resp.polarity,
-            confidence: resp.polarity_confidence,
-            text: resp.text,
-            url: analyseURL
-          });
-        } else {
-          const failedText =
-            "/getSentiment Endpoint -> Something went wrong fetching result from Aylien";
-          logger.debug(failedText);
-        }
-      }
-    );
-
-    // res.send(aylienResult);
-  } catch (error) {
-    logger.debug("/getSentiment Endpoint -> ERROR in SERVER SIDE POST", error);
   }
 });
