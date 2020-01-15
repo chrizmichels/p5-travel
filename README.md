@@ -18,7 +18,7 @@ Get your Keys form the following services:
 
 - [Geonames](https://www.geonames.org/) to get LAT/LON coordinates for your location
 - [Dark Sky](https://darksky.net/) to get the Weather forecast (eats LAT/LON)
-- [Pixbay] https://pixabay.com/ to get some nice pictures
+- [Pixbay](https://pixabay.com/) to get some nice pictures
 - [MapBox](https://account.mapbox.com/auth/signin/?route-to=%22/access-tokens/%22) to get some Geo Dato for [Leaflet](https://leafletjs.com/) Mapping container
 
 Signing up will get yu an API key. Don't worry the API is free to use up to 1000 requests per day or 333 intensive requests. It is free to check how many requests you have remaining for the day.
