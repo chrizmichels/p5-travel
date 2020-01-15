@@ -19,7 +19,7 @@ Get your Keys form the following services:
 - [Geonames](https://www.geonames.org/) to get LAT/LON coordinates for your location
 - [Dark Sky](https://darksky.net/) to get the Weather forecast (eats LAT/LON)
 - [Pixbay](https://pixabay.com/) to get some nice pictures
-- [MapBox](https://account.mapbox.com/auth/signin/?route-to=%22/access-tokens/%22) to get some Geo Dato for [Leaflet](https://leafletjs.com/) Mapping container
+- [MapBox](https://account.mapbox.com/auth/signin/?route-to=%22/access-tokens/%22) to get some Geo Data for [Leaflet](https://leafletjs.com/) Mapping container
 
 Signing up will get yu an API key. Don't worry the API is free to use up to 1000 requests per day or 333 intensive requests. It is free to check how many requests you have remaining for the day.
 
@@ -39,11 +39,11 @@ MAPBOX_API_KEY=**************************
 
 5. Logging
    To get a better trace for debugging I am using a logger you can swith on/off.
-   Client Side:
-   Log on -> `log.level = log.DEBUG;`
-   Log off -> `log.level = log.NONE;`
-   Server Side
-   Log on -> `logger.level = "silent";`
+   Client Side:  
+   Log on -> `log.level = log.DEBUG;`  
+   Log off -> `log.level = log.NONE;`  
+   Server Side  
+   Log on -> `logger.level = "silent";`  
    Log off -> `logger.level = "debug";`
 
 6) have fun :octopus:
