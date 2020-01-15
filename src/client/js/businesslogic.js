@@ -118,7 +118,7 @@ const getLocationInformation = async event => {
         data
       );
 
-      if (data.totalResultsCount === 0) {
+      if (data.totalResultsCount === 0 || data == undefined) {
         alert(`Location ${location} not found. Please try again`);
       } else {
         //Add Location to Map
