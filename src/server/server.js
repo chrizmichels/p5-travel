@@ -16,8 +16,8 @@ const getLogger = require("webpack-log");
 const logger = getLogger({ name: "server-yoda", timestamp: true });
 
 //Switch Log Level
-// logger.level = "silent";
-logger.level = "debug";
+logger.level = "silent";
+// logger.level = "debug";
 
 /* Setup Geonames  */
 const geonames = new Geonames({

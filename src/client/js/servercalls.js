@@ -3,8 +3,8 @@ import ulog from "ulog";
 //Setup Client Side Logging
 
 const log = ulog("servercalls.js");
-log.level = log.DEBUG;
-// log.level = log.NONE;
+// log.level = log.DEBUG;
+log.level = log.NONE;
 
 /* Function to POST data */
 const postData = async (url = "", data = {}) => {

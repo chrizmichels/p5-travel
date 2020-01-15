@@ -5,8 +5,8 @@ const download2 = require("image-downloader");
 const fs = require("fs");
 
 //Switch Log Level
-// logger.level = "silent";
-logger.level = "debug";
+logger.level = "silent";
+// logger.level = "debug";
 
 module.exports.cleanCountries = async (date, match, data = {}) => {
   try {

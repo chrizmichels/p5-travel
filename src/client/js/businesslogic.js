@@ -8,8 +8,8 @@ let projectData = {};
 //Setup Client Side Logging
 
 const log = ulog("busineslogic.js");
-log.level = log.DEBUG;
-// log.level = log.NONE;
+// log.level = log.DEBUG;
+log.level = log.NONE;
 
 //Init Map
 import L from "leaflet";
