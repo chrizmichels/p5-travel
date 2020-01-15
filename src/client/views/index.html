@@ -1,103 +1,97 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title>Udacity Project 5</title>
-        <link 
-            rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-            crossorigin=""
-        />
-        <link
-             href="https://fonts.googleapis.com/css?family=Amatic+SC|Lobster+Two&display=swap"
-             rel="stylesheet"
-         />
-  
-        <script 
-            src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-            crossorigin="">
-        </script>
-        <script
-            src="https://kit.fontawesome.com/b9c8977059.js"
-            crossorigin="anonymous">
-        </script>
+  <head>
+    <meta charset="utf-8" />
+    <title>Travel the world - Udacity Project 5</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Amatic+SC|Lobster+Two&display=swap"
+      rel="stylesheet"
+    />
+
+    <script
+      src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/b9c8977059.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
 
-    <body>
-        <div class="container">
+  <body>
+    <div class="container">
+      <header>
+        <h1 id="title">Travel the World</h1>
+        <ul id="navbar">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </header>
 
-        <header>
-            <h1 id="title">Travel the World</h1>
-            <ul id="navbar">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">About</a></li>
-            </ul>
-        </header>
+      <div class="search">
+        <h1>Let's go somewhere!</h1>
+        <form>
+          <input
+            id="name"
+            type="text"
+            name="input"
+            value="Where"
+            placeholder="Location Name"
+          />
+          <input
+            id="date"
+            type="text"
+            name="input"
+            value="When"
+            placeholder="dd.mm.yyyy"
+          />
+          <!-- <input id="generate" type="submit" onclick="Client.getStarted(event)" onsubmit="Client.getStarted(event)"> -->
+          <button id="generate">Get Results</button>
+        </form>
+        <div class="map">
+          <div id="mapid"></div>
+        </div>
+        <div>
+          <div id="daystoTrip"></div>
+        </div>
+      </div>
 
-        <!-- <main> -->
-            <div class="search">
-                <form> 
+      <div class="results">
+        <div id="card" class="card">
+          <img
+            width="100%"
+            height="auto"
+            src="../media/onload.jpg"
+            alt="holidays, stuff, packing"
+          />
+        </div>
+      </div>
 
-                    <input id="name" type="text" name="input" value="Where"  placeholder="Location Name">
-                    <input id="date" type="text" name="input" value="When"  placeholder="dd.mm.yyyy">
-
-                    <!-- <input id="generate" type="submit" onclick="Client.getStarted(event)" onsubmit="Client.getStarted(event)"> -->
-                <button id="generate">Get Results</button>
-                </form>
-                <div class="map">
-                    <div id="mapid"></div>
-                </div>
-                <div>
-
-                    <div id="daystoTrip"></div>
-
-                </div>
-                  
-
-                
-            </div>
-
-            <div class="results">
-                <div id="location"></div>
-                <div id="country"></div>
-                <div id="lat"></div>
-                <div id="lng"></div>
-                <div id="date"></div>
-                <div id="currentwthrsummary"></div>
-                <div id="hourlywthrsummary"></div>
-                <div id="minTemp"></div>
-                <div id="maxTemp"></div>
-                <div id="imagetags"></div>
-
-                <div id="image"></div>
-          
-                <div id="card" class="card">
-                    <img width="100%" height="auto" src="../media/onload.jpg" alt="holidays, stuff, packing"/>
-
-                </div>
-
-            </div>
-        <!-- </main> -->
-
-        <footer>
-            <div class="footer-right">
-                <a class="fra frh" href="#"><i class="fa fa-facebook"></i></a>
-                <a class="fra frh" href="#"><i class="fa fa-twitter"></i></a>
-                <a class="fra frh" href="#"><i class="fa fa-linkedin"></i></a>
-                <a class="fra frh" href="#"><i class="fa fa-github"></i></a>
-              </div>
-              <div class="footer-left">
-                <p class="footer-links">
-                  <a class=" fla flh fla-link-1" href="#">Home</a>
-                  <a class="fla flh" href="#">About</a>
-                  <a class="fla flh" href="#">Contact</a>
-                </p>
-                <p>TRVLTWRLD Inc. &copy; 2020</p>
-              </div>
-        </footer>
-    <//div>
-<!--         <script>
+      <footer>
+        <div class="footer-right">
+          <a class="fra frh" href="#"><i class="fa fa-facebook"></i></a>
+          <a class="fra frh" href="#"><i class="fa fa-twitter"></i></a>
+          <a class="fra frh" href="#"><i class="fa fa-linkedin"></i></a>
+          <a class="fra frh" href="#"><i class="fa fa-github"></i></a>
+        </div>
+        <div class="footer-left">
+          <p class="footer-links">
+            <a class=" fla flh fla-link-1" href="#">Home</a>
+            <a class="fla flh" href="#">About</a>
+            <a class="fla flh" href="#">Contact</a>
+          </p>
+          <p>TRVLTWRLD Inc. &copy; 2020</p>
+        </div>
+      </footer>
+    </div>
+    <!--         <script>
             // Check that service workers are supported
            if ('serviceWorker' in navigator) {
                 // Use the window load event to keep the page load performant
@@ -106,7 +100,5 @@
                 });
             }
      </script>
-  -->
- 
-</body>
+  --></body>
 </html>

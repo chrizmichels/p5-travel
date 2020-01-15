@@ -19,26 +19,23 @@ const logger = getLogger({ name: "server-yoda", timestamp: true });
 // logger.level = "silent";
 logger.level = "debug";
 
-/* Setup Geonames  */
-const geonames = new Geonames({
-  username: "chrizmichels",
-  lan: "de",
-  encoding: "JSON"
-});
-
 /* 
-Aylien Setup Start
+Setup DOT ENV
 */
 const dotenv = require("dotenv");
 dotenv.config();
-const aylien = require("aylien_textapi");
 
-// set aylien API credentias
-let aylienResult = {};
-var textapi = new aylien({
-  application_id: process.env.API_ID,
-  application_key: process.env.API_KEY
+/* Setup Geonames  */
+const geonames = new Geonames({
+  username: process.env.GEO_USER, //"chrizmichels",
+  lan: "en",
+  encoding: "JSON"
 });
+
+let searchLocation = "";
+let maxRows = 10;
+
+logger.debug(`Server/index.js -> Your Geoname User is ${process.env.GEO_USER}`);
 
 /* Setup Dark Sky API */
 const drkSkyAPIKey = process.env.SKY_API_KEY;
@@ -46,26 +43,19 @@ logger.debug(`Server/index.js -> Your Dark Sky API key is ${drkSkyAPIKey}`);
 
 let drkSkyLat = "42.3601";
 let drkSkyLon = "-71.0589";
-let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon}`;
+// let drkSkyURL = `https://api.darksky.net/forecast/${drkSkyAPIKey}/${drkSkyLat},${drkSkyLon}`;
 
 //Setup PixBay API - PIXBAY_API_KEY
 const pxbayAPIKey = process.env.PIXBAY_API_KEY;
 logger.debug(`Server/index.js -> Your PixBay API key is ${pxbayAPIKey}`);
 
 let pxbaySearch = "";
-let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo`;
-
-//Check if API Keys are readable
-// logger.debug(`Server/index.js -> Your API key is ${process.env.API_KEY}`);
-// logger.debug(`Server/index.js -> Aylien Text Api Object: `, textapi);
-/*  
-Aylien Setup End
-*/
+// let pxbayURL = `https://pixabay.com/api/?key=${pxbayAPIKey}&q=${pxbaySearch}&image_type=photo`;
 
 /* Geonames API Setup - START */
-const geoUserName = process.env.GEO_USER;
-let searchLocation = "";
-let maxRows = 10;
+// const geoUserName = process.env.GEO_USER;
+// let searchLocation = "";
+// let maxRows = 10;
 /* Geonames API Setup - END */
 
 // Setup empty JS object to act as endpoint for all routes
@@ -141,15 +131,35 @@ app.post("/getLocation", async (req, res) => {
     /*     logger.debug(
       "/getLocation Endpoint -> Server side POST - Geonames RESPONSE:",
       continents
-    ); */
+    );
+ */
+    if (continents == undefined) {
+      throw error("Genonames retrn EMPTY");
+    }
 
     //Check if continents are not empty
     if (continents.totalResultsCount > 0) {
-      let cleanData = await Logic.cleanCountries(
-        date,
-        locationToFind,
-        continents
+      logger.debug("/getLocation Endpoint -> Input Date :", date);
+      logger.debug(
+        "/getLocation Endpoint -> Input Location to find:",
+        locationToFind
       );
+      // logger.debug(
+      //   "/getLocation Endpoint -> Input  Return from Geonames:",
+      //   continents
+      // );
+      let cleanData = {};
+      await Logic.cleanCountries(date, locationToFind, continents).then(
+        rtrn => {
+          logger.debug("/getLocation Endpoint -> RTRN:", rtrn);
+          cleanData = rtrn;
+        }
+      );
+
+      if (cleanData == undefined) {
+        throw "---> CleanData return EMPTY";
+      }
+
       logger.debug("/getLocation Endpoint -> Cleaned Location:", cleanData);
       res.json({
         cleanData
@@ -275,46 +285,5 @@ app.post("/copyImgFiles", async (req, res) => {
     res.json(response);
   } catch (error) {
     logger.debug("getCleanData Endpoint -> ERROR in SERVER SIDE POST", error);
-  }
-});
-
-app.post("/getSentiment", async (req, res) => {
-  data = [];
-  data.push(req.body);
-  logger.debug("/getSentiment Endpoint -> POST received with: ", data);
-
-  try {
-    let analyseURL = data[0].url;
-
-    logger.debug(
-      "/getSentiment Endpoint -> Server side POST - Call getSentiment with:",
-      analyseURL
-    );
-
-    textapi.sentiment(
-      {
-        url: analyseURL
-      },
-      function(error, resp) {
-        if (error === null) {
-          // console.log(resp);
-          logger.debug("/getSentiment Endpoint -> Aylien Response: ", resp);
-          res.json({
-            polarity: resp.polarity,
-            confidence: resp.polarity_confidence,
-            text: resp.text,
-            url: analyseURL
-          });
-        } else {
-          const failedText =
-            "/getSentiment Endpoint -> Something went wrong fetching result from Aylien";
-          logger.debug(failedText);
-        }
-      }
-    );
-
-    // res.send(aylienResult);
-  } catch (error) {
-    logger.debug("/getSentiment Endpoint -> ERROR in SERVER SIDE POST", error);
   }
 });

@@ -10,10 +10,27 @@ logger.level = "debug";
 
 module.exports.cleanCountries = async (date, match, data = {}) => {
   try {
-    //logger.debug("Server/logic ->", data.geonames);
+    // let returnData = {};
+    // logger.debug("Server/logic ->", data.geonames);
+    findLocation(date, match, data).then(returnData => {
+      logger.debug(
+        `Server/logic/cleanCountries -> Location Return`,
+        returnData
+      );
+      return returnData;
+    });
+  } catch (err) {
+    logger.debug(`Server/logic/cleanCountries ERROR`, err);
+  }
+};
+
+function findLocation(date, match, data) {
+  try {
+    let returnData = {};
     for (const el of data.geonames) {
+      logger.debug("Server/findLocation Element Name ->", el.name);
       if (el.name === match) {
-        // logger.debug("Server/logic ->", el);
+        logger.debug("Server/logic ->", el);
         return {
           name: el.name,
           lat: el.lat,
@@ -21,14 +38,14 @@ module.exports.cleanCountries = async (date, match, data = {}) => {
           date: date,
           country: el.countryName
         };
+        logger.debug("Server/logic/RETURN ->", returnData);
+        return returnData;
       }
     }
-    // logger.debug("Server/logic/RETURN ->", cleanData);
-    // return cleanData;
-  } catch (err) {
-    logger.debug(`Server/logic/cleanCountries ERROR`, err);
+  } catch (error) {
+    logger.debug(`Server/logic/findLocation ERROR`, error);
   }
-};
+}
 
 module.exports.getDaysToTrip = (travelUnixTime, todayUnixTime) => {
   try {

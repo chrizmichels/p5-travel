@@ -1,29 +1,27 @@
 import ulog from "ulog";
 import { postData } from "./servercalls";
-/* 
-const dotenv = require("dotenv");
-dotenv.config(); */
-/* import { dotenv } from "dotenv";
-dotenv.config();
- */
+import { isUrlValid, isDateValid } from "./validation";
+
 /* Global Variables */
 let projectData = {};
 
-//Setup LOgging
+//Setup Logging
 //Setup Client Side Logging
 const log = ulog("busineslogic.js");
 log.level = log.DEBUG;
 
+//Setup Leaflet Map
 import L from "leaflet";
-//Init Map
+//Init Map - Location Paris
 let mymap = L.map("mapid", {
-  center: new L.LatLng(48.8534, 2.3486),
+  // center: new L.LatLng(48.8534, 2.3486),
   zoom: 8,
   minZoom: 5,
   maxZoom: 13,
   loadingControl: true
 });
 
+//Draw Map
 async function drawMap(mymap, Lat, Lon, LocationName) {
   try {
     const request = await fetch("/getMapBoxAPIKey");
@@ -35,10 +33,10 @@ async function drawMap(mymap, Lat, Lon, LocationName) {
       MapBoxAPIKey
     );
 
-    mymap.setView([Lat, Lon], 13);
+    mymap.setView([Lat, Lon], 10);
     var marker = L.marker([Lat, Lon]).addTo(mymap);
 
-    L.tileLayer(
+    let mapLayer = L.tileLayer(
       `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${MapBoxAPIKey}`,
       {
         attribution:
@@ -51,9 +49,9 @@ async function drawMap(mymap, Lat, Lon, LocationName) {
 
     let latLngs = [marker.getLatLng()];
     let markerBounds = L.latLngBounds(latLngs);
-    mymap.fitBounds(markerBounds);
-
     marker.bindPopup(`<b>Let's go to ${LocationName}</b>`).openPopup();
+    mapLayer.redraw();
+    mymap.fitBounds(markerBounds);
   } catch (error) {
     log.debug(
       "Client/busineslogic.js/drawMap -> ERROR in Client Side - getStarted",
@@ -62,27 +60,15 @@ async function drawMap(mymap, Lat, Lon, LocationName) {
   }
 }
 
+//Initalise Map on first Load
 drawMap(mymap, 48.8534, 2.3486, "Paris");
 
-//Validate URL
-function isUrlValid(userInput) {
-  var res = userInput.match(
-    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
-  );
-  if (res == null) return false;
-  else return true;
-}
-
-//Validate Date24, 121)24, 121)24, 121)24, 121)
-function isDateValid(userInput) {
-  var res = userInput.match(
-    /^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/g
-  );
-  if (res == null) return false;
-  else return true;
-}
-
 /* Function called by event listener */
+/* 
+getLocationInformation is the main function holding all the logicto:
+- Pull data from API's
+- Update UI
+*/
 const getLocationInformation = async event => {
   try {
     event.preventDefault();
@@ -116,10 +102,10 @@ const getLocationInformation = async event => {
 
       const data = await postData("/getLocation", projectData);
 
-      log.debug(
+      /*       log.debug(
         "Client/busineslogic.js/getLocation-> Data returned from postDAta Call:",
         data
-      );
+      ); */
 
       if (data.totalResultsCount === 0) {
         alert(`Location ${location} not found. Please try again`);
@@ -128,9 +114,7 @@ const getLocationInformation = async event => {
         let Lat = data.cleanData.lat;
         let Lon = data.cleanData.lng;
 
-        //////////////
         /// CREATE MAP
-        //////////////
         drawMap(mymap, Lat, Lon, location);
 
         const forecast = await postData("/getForecast", data);
@@ -147,6 +131,7 @@ const getLocationInformation = async event => {
           pictures
         );
 
+        //Put All Data Objects returend from API calls in one Array for cleaning
         let dataToClean = [];
         dataToClean.push(data);
         dataToClean.push(forecast);
@@ -164,7 +149,7 @@ const getLocationInformation = async event => {
           cleanData
         );
 
-        // await updateUILocation(cleanData);
+        //Render Results on the fontend
         travelCard(cleanData);
       }
     } else {
@@ -222,107 +207,6 @@ const travelCard = data => {
   } catch {
     log.debug(
       "Client/busineslogic.js/travelCard -> ERROR in Client Side - getStarted",
-      error
-    );
-  }
-};
-
-//Update UI with all data
-const updateUILocation = async data => {
-  try {
-    log.debug(
-      `Client/busineslogic.js/updateUI ->  Update UI with data Object`,
-      data
-    );
-
-    log.debug("Client/busineslogic.js/const updateUILocation", data);
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Location
-    );
-    document.getElementById("location").innerHTML = `City: ${data.Location}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Country
-    );
-    document.getElementById("country").innerHTML = `Country: ${data.Country}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Latitude
-    );
-    document.getElementById("lat").innerHTML = `Latitude: ${data.Latitude}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Longitude
-    );
-    document.getElementById("lng").innerHTML = `Longitude: ${data.Longitude}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.Date
-    );
-    document.getElementById("date").innerHTML = `Longitude: ${data.Date}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.CurrentWthrSummary
-    );
-    document.getElementById(
-      "currentwthrsummary"
-    ).innerHTML = `Current Weather: ${data.CurrentWthrSummary}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.HourlyWthrSummary
-    );
-    document.getElementById(
-      "hourlywthrsummary"
-    ).innerHTML = `Hourly Forecast: ${data.HourlyWthrSummary}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.minTemp
-    );
-    document.getElementById("minTemp").innerHTML = `Min Temp: ${data.minTemp}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.maxTemp
-    );
-    document.getElementById("maxTemp").innerHTML = `Max Temp: ${data.maxTemp}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.ImageTags
-    );
-    document.getElementById(
-      "imagetags"
-    ).innerHTML = `Image Tags: ${data.ImageTags}`;
-    //
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.DaysToTrip
-    );
-    document.getElementById(
-      "daystoTrip"
-    ).innerHTML = `Days to Trip: ${data.DaysToTrip}`;
-    //
-
-    log.debug(
-      "Client/busineslogic.js/const updateUILocation -> set ",
-      data.ImageUrl
-    );
-
-    document.getElementById(
-      "image"
-    ).innerHTML = ` <img width="100%" height="auto" src="${data.ImageUrlTo}" alt="${data.ImageTags}"
-  />`;
-  } catch (error) {
-    log.debug(
-      "Client/busineslogic.js/updateUILocation -> ERROR in Client Side updateUILocation",
       error
     );
   }
