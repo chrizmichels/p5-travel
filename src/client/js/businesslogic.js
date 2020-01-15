@@ -9,6 +9,11 @@ dotenv.config();
 /* Global Variables */
 let projectData = {};
 
+//Setup LOgging
+//Setup Client Side Logging
+const log = ulog("busineslogic.js");
+log.level = log.DEBUG;
+
 import L from "leaflet";
 //Init Map
 let mymap = L.map("mapid", {
@@ -19,15 +24,16 @@ let mymap = L.map("mapid", {
   loadingControl: true
 });
 
-function drawMap(mymap, Lat, Lon, LocationName) {
+async function drawMap(mymap, Lat, Lon, LocationName) {
   try {
-    const request = fetch("/getMapBoxAPIKey");
-    let MapBoxAPIKey = request.key;
+    const request = await fetch("/getMapBoxAPIKey");
+    const keyData = await request.json();
+    let MapBoxAPIKey = keyData.key;
 
-    // log.debug(`MAP`, mymap);
-    MapBoxAPIKey =
-      "pk.eyJ1IjoiY2hyaXptaWNoZWxzIiwiYSI6ImNrNWN4Z3lqbzF2Z2EzbXBnbXBicnd0aHUifQ.NmMvjb2FN_RWS1vEV4BYgg";
-    // process.env.MAPBOX_API_KEY;
+    log.debug(
+      "Client/busineslogic.js/getMapBoxAPIKey -> MapBoyKey",
+      MapBoxAPIKey
+    );
 
     mymap.setView([Lat, Lon], 13);
     var marker = L.marker([Lat, Lon]).addTo(mymap);
@@ -57,10 +63,6 @@ function drawMap(mymap, Lat, Lon, LocationName) {
 }
 
 drawMap(mymap, 48.8534, 2.3486, "Paris");
-
-//Setup Client Side Logging
-const log = ulog("busineslogic.js");
-log.level = log.DEBUG;
 
 //Validate URL
 function isUrlValid(userInput) {

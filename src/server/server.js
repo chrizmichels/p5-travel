@@ -113,13 +113,13 @@ app.get("/getDaysToTrip", (req, res) => {
   }
 });
 
-app.get("/getMapBoxAPIKey", (req, res) => {
+app.get("/getMapBoxAPIKey", async (req, res) => {
   try {
     logger.debug("Server/getMapBoxAPIKey Endpoint -> Get request: ", req);
-
-    res.send({ key: process.env.API_KEY });
+    let value = { key: process.env.MAPBOX_API_KEY }; //res.json({ key: process.env.MAPBOX_API_KEY });
+    res.send(value);
   } catch (error) {
-    logger.debug(`ERROR Server/getDaysToTrip Endpoint -> Get reques`);
+    logger.debug(`ERROR Server/getMapBoxAPIKey Endpoint -> Get request`, error);
   }
 });
 
