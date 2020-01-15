@@ -203,8 +203,8 @@ const travelCard = data => {
         <img  src="${data.ImageUrlTo}" alt="${data.ImageTags}"/>
         <h2>You are traveling to ${data.Location} in ${data.Country}, expect the following weather: </h2>
         ${weatherSummary}
-        <h2>Temperature High: ${data.minTemp} celsius</h2>
-        <h2>Temperature Low: ${data.maxTemp} celsius</h2>
+        <h2>Temperature High: ${data.maxTemp} celsius</h2>
+        <h2>Temperature Low: ${data.minTemp} celsius</h2>
     </div>
     `;
 
