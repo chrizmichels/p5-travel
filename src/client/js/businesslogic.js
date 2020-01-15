@@ -17,7 +17,7 @@ log.level = log.DEBUG;
 import L from "leaflet";
 //Init Map
 let mymap = L.map("mapid", {
-  center: new L.LatLng(48.8534, 2.3486),
+  // center: new L.LatLng(48.8534, 2.3486),
   zoom: 8,
   minZoom: 5,
   maxZoom: 13,
