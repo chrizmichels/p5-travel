@@ -1,16 +1,5 @@
-/* header {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 40px;
-  background: rgb(197, 3, 171);
-  height: 100px;
-  color: #e7e7e7;
-}
- */
-
 header {
   grid-area: hd;
-  // grid-area: 1 / 1 / 3 / 9;
   display: flex;
   padding: 20px;
   height: 150px;
@@ -35,8 +24,6 @@ header {
   justify-content: flex-end;
   list-style: none;
   /* border: 2px solid lightgrey; */
-  /* font-family: "Amatic SC", cursive; */
-  /* font-size: x-large; */
 }
 
 li a {

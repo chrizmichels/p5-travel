@@ -48,22 +48,26 @@ body {
   flex-direction: column;
   justify-self: center;
   padding: 20px;
-  // display: inline-block;
-
   // border: 2px solid blue;
-  // grid-area: 3 / 7 / 8 / 9;
+
   h1 {
     color: lightsalmon;
     font-size: x-large;
+  }
+  button {
+    width: 200px;
+    margin: 2px;
+    border: none;
+    font-size: large;
+    color: antiquewhite;
+    background-color: aquamarine;
+    align-items: flex-end;
+    color: black;
   }
 }
 
 .map {
   grid-area: src;
-  // justify-self: center;
-  // align-self: center;
-  // display: block;
-  // width: 90%;
   // border: 2px solid lightgreen;
   display: block;
   border-radius: 3px;
@@ -71,22 +75,15 @@ body {
   width: 100%;
   align-self: center;
   #mapid {
-    // grid-area: src;
-    // justify-self: center;
-    // border: 2px solid brown;
     height: 260px;
-    // padding: 10px;
-    // width: 100%;
   }
 }
 
 .results {
   grid-area: mn;
-  // justify-self: center;
   // border: 2px solid green;
   display: block;
   padding: 10px;
-  // grid-area: 3 / 1 / 8 / 7;
   h1 {
     color: lightsalmon;
     font-size: x-large;
@@ -114,97 +111,3 @@ body {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   }
 }
-
-button {
-  width: 200px;
-  border: none;
-  font-size: large;
-  color: antiquewhite;
-  background-color: aquamarine;
-  align-items: flex-end;
-  color: black;
-}
-
-//////////////////////
-// Start fro mscratch above
-/////////////////////
-/* body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
- */
-/* 
-main {
-  flex: 2;
-}
-
-section {
-  max-width: 800px;
-  margin: 50px auto;
-  border: 2px solid lightyellow;
-}
-
-.search {
-  grid-area: search;
-  border: 2px solid blue;
-}
-
-.results {
-  grid-area: main;
-  border: 2px solid green;
-}
-
-#mapid {
-  grid-area: search;
-  border: 2px solid brown;
-  padding: 10px;
-  height: 180px;
-  width: 250px;
-}
-
-//////// New Stuff below ////
-
-body {
-  background-color: #444;
-  color: #fffff8;
-
-  /*   background-image: linear-gradient(
-      rgba(68, 68, 68, 0.8),
-      rgba(68, 68, 68, 0.8)
-    ),
-    url("../media/back.jpg");
-  background-position: center; 
-}
-
-/* General GRID Configuration 
-
-.container {
-  display: grid;
-  grid-template-columns: repeat(6, 1fl);
-  grid-auto-rows: minmax(10px, auto);
-  padding: 10px;
-  gap: 20px;
-  border: 2px solid red;
-  flex: 2;
-  grid-template-areas:
-    "hd"
-    "search"
-    "main"
-    "ft";
-  /* border: 2px solid pink; 
-  font-size: large;
-  font-family: "Inconsolata", monospace;
-  /* align-content: center; 
-}
-
-@media (min-width: 900px) {
-  .container {
-    grid-template-areas:
-      "hd hd hd hd hd hd"
-      "main main main main search search"
-      "ft ft ft ft ft ft";
-    font-size: medium;
-  }
-}
- */
