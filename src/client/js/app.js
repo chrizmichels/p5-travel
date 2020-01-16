@@ -1,10 +1,10 @@
+
 /* Imports */
 import ulog from "ulog";
 
 import { getLocationInformation } from "./businesslogic";
 
 //Setup Client Side Logging
-
 const log = ulog("app.js");
 // log.level = log.DEBUG;
 log.level = log.NONE;

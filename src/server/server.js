@@ -88,7 +88,7 @@ app.get("/", function(req, res) {
   res.sendFile(`${distPath}/index.html`);
 });
 
-let port = 8085;
+let port = 8086;
 // let port = 3030;
 
 // designates what port the app will listen to for incoming requests
